@@ -13,7 +13,7 @@ namespace cloudfileserver
 		    public class AppHost : AppHostBase
 		    {	
 		        //Tell Service Stack the name of your application and where to find your web services
-		        public AppHost() : base("Hello Web Services", typeof(HelloService).Assembly) { }
+		        public AppHost() : base("Hello Web Services",typeof(HelloService).Assembly) { }
 
 		        public override void Configure(Funq.Container container)
 		        {
@@ -47,11 +47,10 @@ namespace cloudfileserver
 
 	public class HelloService : Service
 	{
-	    public object Any(Hello request)
+	    public object Get(Hello request)
 	    {
 	        return new HelloResponse { Result = "Hello, " + request.Name };
 	    }
 	} 
-
 }
 

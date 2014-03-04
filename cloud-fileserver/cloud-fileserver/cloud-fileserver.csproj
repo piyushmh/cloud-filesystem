@@ -68,5 +68,14 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="FileServer.ServiceModel\UserFile.cs" />
+    <Compile Include="Fileserver.ServiceCore\InMemoryFileSystem.cs" />
+    <Compile Include="Fileserver.ServiceCore\UserFileSystem.cs" />
+    <Compile Include="FileServer.ServiceModel\UserMetaData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fileserver.ServiceImpl\" />
+    <Folder Include="FileServer.ServiceModel\" />
+    <Folder Include="Fileserver.ServiceCore\" />
   </ItemGroup>
 </Project>
