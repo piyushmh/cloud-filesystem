@@ -72,6 +72,7 @@
     <Compile Include="Fileserver.ServiceCore\InMemoryFileSystem.cs" />
     <Compile Include="Fileserver.ServiceCore\UserFileSystem.cs" />
     <Compile Include="FileServer.ServiceModel\UserMetaData.cs" />
+    <Compile Include="Fileserver.ServiceImpl\CloudFileService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />

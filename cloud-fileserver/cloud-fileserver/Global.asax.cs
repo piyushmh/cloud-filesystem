@@ -13,15 +13,12 @@ namespace cloudfileserver
 		    public class AppHost : AppHostBase
 		    {	
 		        //Tell Service Stack the name of your application and where to find your web services
-		        public AppHost() : base("Hello Web Services",typeof(HelloService).Assembly) { }
+		        public AppHost() : base("Hello Web Services",typeof(CloudFileService).Assembly) { }
 
-		        public override void Configure(Funq.Container container)
-		        {
-					//use this for adding dependencies. 
-					// Isis initialization code might go here
-
-		            //register any dependencies your services use, e.g:
-		            //container.Register<ICacheClient>(new MemoryCacheClient());
+		        public override void Configure(Funq.Container container){
+					Plugins.Add(new RequestLogsFeature());
+					this.Config.DefaultContentType = "Json";					
+					container.RegisterAutoWired<InMemoryFileSystem>();
 		        }
 			 }
 
@@ -32,25 +29,5 @@ namespace cloudfileserver
 	    }
 
 	}
-
-	[Route("/hello")]
-	[Route("/hello/{Name}")]
-	public class Hello
-	{
-	    public string Name { get; set; }
-	}
-
-	public class HelloResponse
-	{
-		public string Result { get; set; }
-	}
-
-	public class HelloService : Service
-	{
-	    public object Get(Hello request)
-	    {
-	        return new HelloResponse { Result = "Hello, " + request.Name };
-	    }
-	} 
 }
 

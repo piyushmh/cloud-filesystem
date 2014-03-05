@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 
+//Author - piyush
+
 namespace cloudfileserver
 {
 	public class UserFileSystem
 	{
-		public string username { get; set;}
-
-		public string password { get; set;}
+		private UserMetaData metadata;
 
 		private Dictionary<string, UserFile> filemap;
 
@@ -15,6 +15,16 @@ namespace cloudfileserver
 
 		public UserFileSystem ()
 		{
+			//Custom constructor
+		}
+
+		public UserFileSystem (UserMetaData metadata)
+		{	
+			this.metadata = metadata;
+		}
+
+		void addFile(UserFile file){
+			this.filemap.Add(file.filepath, file);
 		}
 	}
 }
