@@ -20,9 +20,9 @@ namespace cloudfileserver
 			clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
 			UserFileSystem filesystem = new UserFileSystem();
 			filesystem.metadata = new UserMetaData("piyush", "password", 1);
-			UserFile file = new UserFile("/x.txt","piyush");
-			file.filecontent = Utils.getByteArrayFromString("Filecontent");
-			filesystem.filemap.Add("/x.txt", file);
+			UserFile file = new UserFile("x.txt","piyush");
+			file.SetFileContent(Utils.getByteArrayFromString("Filecontent"), 0);
+			filesystem.filemap.Add("x.txt", file);
 			filesystem.filemap.Add("/x/y.txt", file);
 			filesystem.filemap.Add("/x/z/y/.txt", file);
 			this.clientToFileSystemMap.Add("piyush", filesystem);
@@ -40,16 +40,17 @@ namespace cloudfileserver
 			string filename, 
 			string fileowner)
 		{
-			UserFile file;
-			if (this.clientToFileSystemMap.ContainsKey(fileowner)) {
-				if( this.clientToFileSystemMap[fileowner].filemap.ContainsKey( filename)){
+			Logger.Debug(filename);
+			UserFile file = null;
+			if (this.clientToFileSystemMap.ContainsKey (fileowner)) {
+				if (this.clientToFileSystemMap [fileowner].filemap.ContainsKey (filename)) {
 					file = this.clientToFileSystemMap [fileowner].filemap [filename];
-				}else{
-					throw new FileNotFoundException("File with name :" + filename + 
-					             " not found for owner : " + fileowner);
+				} else {
+					throw new FileNotFoundException ("File with name :" + filename + 
+						" not found for owner : " + fileowner);
 				}
 			} else {
-				throw new UserNotLoadedInMemoryException("Client not found in memory : " + clientId);
+				throw new UserNotLoadedInMemoryException ("Client not found in memory : " + clientId);
 			}
 			if (! fileowner.Equals (clientId)) {
 				bool access = false;
@@ -60,8 +61,9 @@ namespace cloudfileserver
 					}
 				}
 				if (!access) {
-					throw new AccessViolationException("File : " + filename + " owned by " + 
-					              fileowner + "is not shared with " + clientId);
+					throw new AccessViolationException ("File : " + filename + " owned by " + 
+						fileowner + "is not shared with " + clientId
+					);
 				}
 			}
 			return file;
@@ -94,9 +96,19 @@ namespace cloudfileserver
 			return userList;
 		}
 
+		/**/
+		public UserFileSystem GetClonedInMemoryUserFileSystem (string clientId)
+		{
 
+			if (this.clientToFileSystemMap.ContainsKey(clientId)) {
+				UserFileSystem filesystem = this.clientToFileSystemMap[clientId];
+				return filesystem.CloneSynchronized();
+			} else {
+				throw new UserNotLoadedInMemoryException("Client not found in memory :" + clientId);
+			}
+		}
 
-
+		
 		//getinmemoryuserobject(synchronized)
 		//saveuserobjecttomemory(synchronized), take care of versioning he
 		

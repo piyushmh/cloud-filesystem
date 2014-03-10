@@ -87,6 +87,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Fileserver.Exceptions\UserNotLoadedInMemoryException.cs" />
     <Compile Include="Fileserver.Exceptions\FileNotFoundException.cs" />
+    <Compile Include="Fileserver.PersistentStore\PersistentStoreInteraction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />
@@ -94,5 +95,6 @@
     <Folder Include="Fileserver.ServiceCore\" />
     <Folder Include="FileServer.Utils\" />
     <Folder Include="Fileserver.Exceptions\" />
+    <Folder Include="Fileserver.PersistentStore\" />
   </ItemGroup>
 </Project>
