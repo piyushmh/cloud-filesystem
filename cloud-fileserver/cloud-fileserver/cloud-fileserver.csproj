@@ -78,23 +78,23 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="FileServer.ServiceModel\UserFile.cs" />
     <Compile Include="Fileserver.ServiceCore\InMemoryFileSystem.cs" />
     <Compile Include="Fileserver.ServiceCore\UserFileSystem.cs" />
-    <Compile Include="FileServer.ServiceModel\UserMetaData.cs" />
     <Compile Include="Fileserver.ServiceImpl\CloudFileService.cs" />
-    <Compile Include="FileServer.Utils\Utils.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Fileserver.Exceptions\UserNotLoadedInMemoryException.cs" />
     <Compile Include="Fileserver.Exceptions\FileNotFoundException.cs" />
     <Compile Include="Fileserver.PersistentStore\PersistentStoreInteraction.cs" />
+    <Compile Include="Fileserver.ServiceModel\UserFile.cs" />
+    <Compile Include="Fileserver.ServiceModel\UserMetaData.cs" />
+    <Compile Include="Fileserver.Utils\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />
-    <Folder Include="FileServer.ServiceModel\" />
     <Folder Include="Fileserver.ServiceCore\" />
-    <Folder Include="FileServer.Utils\" />
     <Folder Include="Fileserver.Exceptions\" />
     <Folder Include="Fileserver.PersistentStore\" />
+    <Folder Include="Fileserver.ServiceModel\" />
+    <Folder Include="Fileserver.Utils\" />
   </ItemGroup>
 </Project>

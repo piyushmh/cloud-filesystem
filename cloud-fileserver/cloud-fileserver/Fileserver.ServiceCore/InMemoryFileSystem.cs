@@ -19,13 +19,13 @@ namespace cloudfileserver
 		public InMemoryFileSystem ()
 		{
 			try {
-				Logger.Debug ("Starting constructor");
+				Logger.Debug ("Starting InMemoryFileSystemconstructor");
+
 				//This is just dummy, later this will be filled by ISIS bootstrapping
 				this.clientToFileSystemMap = new Dictionary<string, UserFileSystem> ();
 				Logger.Debug ("Starting constructor1");
 				UserFileSystem filesystem = new UserFileSystem (new UserMetaData ("piyush", "password", 1));
 				UserFile file = new UserFile ("x.txt", "piyush");
-				Logger.Debug ("Starting constructor1");
 				file.SetFileContent (Utils.getByteArrayFromString ("Filecontent"), 0);
 				filesystem.filemap.Add ("x.txt", file);
 				filesystem.filemap.Add ("dir1/y.txt", file);
