@@ -14,9 +14,9 @@ namespace cloudfileserver
 
 		public string owner { get; set;}
 
-		private byte[] filecontent;//access to this must be through synchronized methods, DAFUQ
+		private byte[] filecontent;//access to this must be through synchronized methods
 
-		//Ideally access to this should be synchronized as well, maybe later
+		//DAFUQ, ideally access to this should be synchronized as well, maybe later
 		public long filesize { get; set;}
 
 		public List<string> sharedwithclients { get; set;}
@@ -41,8 +41,14 @@ namespace cloudfileserver
 		public byte[] ReadFileContentSynchronized ()
 		{
 			lock (privateLock) {
-				return this.filecontent;
+				return ReadFileContent();
 			}
+		}
+
+		public byte[] ReadFileContent ()
+		{
+			return this.filecontent;
+
 		}
 
 		public bool SetFileContentSynchronized (UserFile newfile)
@@ -68,12 +74,12 @@ namespace cloudfileserver
 				this.versionNumber = newversionNumber;
 				this.filesize = newcontent.Length;
 				return true;
-
 			}else{
 				logger.Debug("File over write attempt with smaller version number, ignoring");
 				return false;
 			}	
 		}
+
 
 
 	}

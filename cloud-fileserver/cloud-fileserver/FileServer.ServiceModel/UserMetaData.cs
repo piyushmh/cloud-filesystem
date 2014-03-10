@@ -3,7 +3,8 @@ using System;
 //author - piyush
 
 namespace cloudfileserver
-{	[Serializable]
+{	
+	[Serializable]
 	public class UserMetaData
 	{
 		public string clientId { get; set;}

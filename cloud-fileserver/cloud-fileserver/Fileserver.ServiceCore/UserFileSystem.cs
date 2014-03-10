@@ -8,13 +8,14 @@ using System.Runtime.Serialization.Formatters.Binary;
  */
 
 namespace cloudfileserver
-{	[Serializable]
+{	
+	[Serializable]
 	public class UserFileSystem
 	{
 		private object privateLock;//this object is used to synchronize access over this object
 
-		private static readonly log4net.ILog Logger = 
-			log4net.LogManager.GetLogger(typeof(UserFileSystem));
+		//private static readonly log4net.ILog Logger = 
+		//	log4net.LogManager.GetLogger(typeof(UserFileSystem));
 
 		private UserMetaData metadata;
 

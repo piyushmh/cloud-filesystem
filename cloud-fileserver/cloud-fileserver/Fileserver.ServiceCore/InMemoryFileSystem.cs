@@ -28,8 +28,8 @@ namespace cloudfileserver
 				Logger.Debug ("Starting constructor1");
 				file.SetFileContent (Utils.getByteArrayFromString ("Filecontent"), 0);
 				filesystem.filemap.Add ("x.txt", file);
-				filesystem.filemap.Add ("/x/y.txt", file);
-				filesystem.filemap.Add ("/x/z/y/.txt", file);
+				filesystem.filemap.Add ("dir1/y.txt", file);
+				filesystem.filemap.Add ("dir1/dir2/z.txt", file);
 				this.clientToFileSystemMap.Add ("piyush", filesystem);
 				Logger.Debug ("Starting checkpointing");
 				this.persistentstoreinteraction = new PersistentStoreInteraction ();
