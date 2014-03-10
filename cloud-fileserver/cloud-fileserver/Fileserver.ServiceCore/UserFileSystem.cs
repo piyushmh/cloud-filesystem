@@ -7,15 +7,15 @@ namespace cloudfileserver
 {
 	public class UserFileSystem
 	{
-		private UserMetaData metadata;
+		public UserMetaData metadata {get;set;}
 
-		private Dictionary<string, UserFile> filemap;
+		public Dictionary<string, UserFile> filemap {get; set;}
 
 
 
 		public UserFileSystem ()
 		{
-			//Custom constructor
+			filemap = new Dictionary<string, UserFile>();
 		}
 
 		public UserFileSystem (UserMetaData metadata)
@@ -23,7 +23,7 @@ namespace cloudfileserver
 			this.metadata = metadata;
 		}
 
-		void addFile(UserFile file){
+		public void addFile(UserFile file){
 			this.filemap.Add(file.filepath, file);
 		}
 	}

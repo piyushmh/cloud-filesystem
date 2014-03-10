@@ -6,8 +6,7 @@ namespace cloudfileserver
 	/*
 	 * This class represents one file in the file system 
 	 */
-	public class UserFile
-	{
+	public class UserFile	{
 		//This also acts as unique identifier for the file in the userfilesystem
 		public string filepath { get; set;}
 
@@ -17,6 +16,7 @@ namespace cloudfileserver
 
 		public List<string> sharedwithclients { get; set;}
 
+		/*This basically acts as the virtual clock*/
 		public long versionNumber {get;set;}
 
 		public UserFile ()

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Web;
 using System.Web.SessionState;
 using ServiceStack;
-
 namespace cloudfileserver
 {
 	public class Global : System.Web.HttpApplication
@@ -17,8 +16,9 @@ namespace cloudfileserver
 
 		        public override void Configure(Funq.Container container){
 					Plugins.Add(new RequestLogsFeature());
-					this.Config.DefaultContentType = "Json";					
-					container.RegisterAutoWired<InMemoryFileSystem>();
+					this.Config.DefaultContentType = "Json";	
+					//container.RegisterAutoWired<InMemoryFileSystem>();
+					container.Register<InMemoryFileSystem>(c => new InMemoryFileSystem());
 		        }
 			 }
 
