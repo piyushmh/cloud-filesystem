@@ -59,14 +59,19 @@ namespace cloudfileserver
 		public object Get (GetFile request)
 		{
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-				throw new AuthenticationException("Authentication failed");
+				throw new AuthenticationException ("Authentication failed");
 			}
 
-			logger.Debug("1 : " + filesystem);
-			UserFile file = 
-				filesystem.FetchFile( request.clientId, request.filename, request.fileowner);
-
-			return file;
+			logger.Debug ("1 : " + filesystem);
+			try {
+				UserFile file = 
+					filesystem.FetchFile (request.clientId, request.filename, request.fileowner);
+				return file;
+			} catch (Exception e) {
+				logger.Debug("Exception occured while doing getfile for client : " + request.clientId
+				             +" for filename :" + request.filename , e);
+				throw e;
+			}
 		}
 
 		public object Get(GetUserFileList request){

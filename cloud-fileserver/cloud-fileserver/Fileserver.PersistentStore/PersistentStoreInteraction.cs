@@ -33,23 +33,29 @@ namespace cloudfileserver
 			Directory.CreateDirectory (path);
 			string lastcheckpointfilepath = this.pathprefix + lastcheckpointfilename;
 			List<string> userlist = filesystem.GetInMemoryUserList ();
-			foreach (string user in userlist) {
-				string userpath = path +user + '/';
-				Directory.CreateDirectory(userpath);
-				string metadatafilepath = userpath + this.metadatafilename;
-				UserFileSystem userfilesystem = filesystem.clientToFileSystemMap[user].CloneSynchronized();
-				string metadata = userfilesystem.metadata.clientId + "\n" + userfilesystem.metadata.password
-					+ "\n" + userfilesystem.metadata.versionNumber + "\n" ;
-				List<String> files = userfilesystem.GetFileList();
-				foreach( string filename in files){
-					metadata  += filename + "\n" ;
-				}
+			try{
+				foreach (string user in userlist) {
+					string userpath = path +user + '/';
+					Directory.CreateDirectory(userpath);
+					string metadatafilepath = userpath + this.metadatafilename;
+					UserFileSystem userfilesystem = filesystem.clientToFileSystemMap[user].CloneSynchronized();
+					string metadata = userfilesystem.GetMetadata().clientId + "\n" + userfilesystem.GetMetadata().password
+						+ "\n" + userfilesystem.GetMetadata().versionNumber + "\n" ;
+					List<String> files = userfilesystem.GetFileList();
+					foreach( string filename in files){
+						metadata  += filename + "\n" ;
+					}
 
-				logger.Debug("Writing meta file at path :" + metadatafilepath + " with content : " + metadata);
-				System.IO.File.WriteAllText(metadatafilepath, metadata);
-				logger.Debug ("Writing to last checkpoint file at path : " + lastcheckpointfilepath);
-				System.IO.File.WriteAllText(lastcheckpointfilepath, path);
+					logger.Debug("Writing meta file at path :" + metadatafilepath + " with content : " + metadata);
+					System.IO.File.WriteAllText(metadatafilepath, metadata);
+					logger.Debug ("Writing to last checkpoint file at path : " + lastcheckpointfilepath);
+					System.IO.File.WriteAllText(lastcheckpointfilepath, path);
+				}
+			}catch ( Exception e){
+					logger.Debug ("Exception :" + e);
+				throw e;
 			}
+
 		}
 
 		private string GenerateCheckpointPath(){

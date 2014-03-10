@@ -26,7 +26,7 @@ namespace cloudfileserver
 		private object privateLock = new object();
 
 		private static readonly log4net.ILog logger = 
-			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
+			log4net.LogManager.GetLogger(typeof(UserFile));
 
 
 		public UserFile (string filepath, string owner)
@@ -61,6 +61,7 @@ namespace cloudfileserver
 		}
 
 		public bool SetFileContent( byte[] newcontent, long newversionNumber){
+			logger.Debug("Set file content called on file with path :" + this.filepath);
 			if( this.versionNumber < newversionNumber){ //only if the file is of a newer version
 				this.filecontent = new byte[newcontent.Length];
 				System.Array.Copy(this.filecontent, newcontent, newcontent.Length);

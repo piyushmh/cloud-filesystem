@@ -8,34 +8,28 @@ using System.Runtime.Serialization.Formatters.Binary;
  */
 
 namespace cloudfileserver
-{
+{	[Serializable]
 	public class UserFileSystem
 	{
-		private object privateLock = new object();//this object is used to synchronize access over this object
+		private object privateLock;//this object is used to synchronize access over this object
 
-		public UserMetaData metadata {
-			get {
-				lock (privateLock) {
-					return this.metadata;
-				}
-			}
-			set{
-				lock(this.privateLock){
-					this.metadata = value;
-				}
-			}
-		}
+		private static readonly log4net.ILog Logger = 
+			log4net.LogManager.GetLogger(typeof(UserFileSystem));
+
+		private UserMetaData metadata;
 
 		public Dictionary<string, UserFile> filemap {get; set;}
 
-
 		public UserFileSystem (){
-			filemap = new Dictionary<string, UserFile>();
+			this.filemap = new Dictionary<string, UserFile>();
+			this.privateLock = new object();
 		}
 
 		public UserFileSystem (UserMetaData metadata){	
-			filemap = new Dictionary<string, UserFile>();
+			this.filemap = new Dictionary<string, UserFile>();
+			this.privateLock = new object();
 			this.metadata = metadata;
+
 		}
 
 		public void addFile(UserFile file){
@@ -79,6 +73,19 @@ namespace cloudfileserver
 			return retlist;
 		}
 
+		public UserMetaData GetMetadata ()
+		{
+			lock (this.privateLock) {
+				return this.metadata;
+			}
+		}
+
+		public void SetMetadata (UserMetaData metadata)
+		{
+			lock (this.privateLock) {
+				this.metadata = metadata;
+			}
+		}
 	}
 }
 

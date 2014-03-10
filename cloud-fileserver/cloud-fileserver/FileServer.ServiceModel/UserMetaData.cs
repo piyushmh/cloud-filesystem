@@ -6,7 +6,6 @@ namespace cloudfileserver
 {	[Serializable]
 	public class UserMetaData
 	{
-
 		public string clientId { get; set;}
 
 		public string password { get; set;}

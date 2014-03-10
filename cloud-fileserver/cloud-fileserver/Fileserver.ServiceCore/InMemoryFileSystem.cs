@@ -14,18 +14,31 @@ namespace cloudfileserver
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
 
-		public InMemoryFileSystem()
+		private PersistentStoreInteraction persistentstoreinteraction;
+
+		public InMemoryFileSystem ()
 		{
-			//This is just dummy, later this will be filled by ISIS bootstrapping
-			clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
-			UserFileSystem filesystem = new UserFileSystem();
-			filesystem.metadata = new UserMetaData("piyush", "password", 1);
-			UserFile file = new UserFile("x.txt","piyush");
-			file.SetFileContent(Utils.getByteArrayFromString("Filecontent"), 0);
-			filesystem.filemap.Add("x.txt", file);
-			filesystem.filemap.Add("/x/y.txt", file);
-			filesystem.filemap.Add("/x/z/y/.txt", file);
-			this.clientToFileSystemMap.Add("piyush", filesystem);
+			try {
+				Logger.Debug ("Starting constructor");
+				//This is just dummy, later this will be filled by ISIS bootstrapping
+				this.clientToFileSystemMap = new Dictionary<string, UserFileSystem> ();
+				Logger.Debug ("Starting constructor1");
+				UserFileSystem filesystem = new UserFileSystem (new UserMetaData ("piyush", "password", 1));
+				UserFile file = new UserFile ("x.txt", "piyush");
+				Logger.Debug ("Starting constructor1");
+				file.SetFileContent (Utils.getByteArrayFromString ("Filecontent"), 0);
+				filesystem.filemap.Add ("x.txt", file);
+				filesystem.filemap.Add ("/x/y.txt", file);
+				filesystem.filemap.Add ("/x/z/y/.txt", file);
+				this.clientToFileSystemMap.Add ("piyush", filesystem);
+				Logger.Debug ("Starting checkpointing");
+				this.persistentstoreinteraction = new PersistentStoreInteraction ();
+				Logger.Debug ("Starting checkpointing1");
+				this.persistentstoreinteraction.DoCheckPoint (this);
+			} catch (Exception e) {
+				Logger.Debug("Exception caught :"  + e);
+				throw e;
+			}
 		}
 
 		/*
