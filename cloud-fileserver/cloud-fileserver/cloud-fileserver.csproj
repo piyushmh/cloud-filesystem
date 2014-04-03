@@ -88,6 +88,7 @@
     <Compile Include="Fileserver.ServiceModel\UserFile.cs" />
     <Compile Include="Fileserver.ServiceModel\UserMetaData.cs" />
     <Compile Include="Fileserver.Utils\Utils.cs" />
+    <Compile Include="Fileserver.PersistentStore\CheckPointObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />

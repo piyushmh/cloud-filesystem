@@ -14,7 +14,8 @@ namespace cloudfileserver
 
 		public string owner { get; set;}
 
-		private byte[] filecontent;//access to this must be through synchronized methods
+		//access to this must be through synchronized methods if needed, they are defined below
+		public byte[] filecontent { get; set;}
 
 		//DAFUQ, ideally access to this should be synchronized as well, maybe later
 		public long filesize { get; set;}

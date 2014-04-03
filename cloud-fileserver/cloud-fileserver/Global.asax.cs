@@ -12,7 +12,7 @@ namespace cloudfileserver
 		    public class AppHost : AppHostBase
 		    {	
 		        //Tell Service Stack the name of your application and where to find your web services
-		        public AppHost() : base("Hello Web Services",typeof(CloudFileService).Assembly) { }
+		        public AppHost() : base("File Server",typeof(CloudFileService).Assembly) { }
 
 		        public override void Configure(Funq.Container container){
 					Plugins.Add(new RequestLogsFeature());

@@ -1,0 +1,22 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.ServiceImpl/PersistentStorageService.cs">
+    <Files>
+      <File FileName="persistent-backend/PersistentStore.Model/UserFile.cs" Line="19" Column="11" />
+      <File FileName="persistent-backend/Global.asax.cs" Line="15" Column="28" />
+      <File FileName="persistent-backend/packages.config" Line="1" Column="1" />
+      <File FileName="persistent-backend/Global.asax" Line="1" Column="1" />
+      <File FileName="persistent-backend/PersistentStorage.ServiceImpl/PersistentStorageService.cs" Line="22" Column="23" />
+      <File FileName="persistent-backend/web.config" Line="18" Column="25" />
+      <File FileName="persistent-backend/AssemblyInfo.cs" Line="29" Column="1" />
+      <File FileName="persistent-backend/PersistentStore.Model/UserMetaData.cs" Line="1" Column="1" />
+      <File FileName="persistent-backend/PersistentStore.Model/UserFileSystem.cs" Line="11" Column="16" />
+      <File FileName="persistent-backend/PersistentStore.Model/CheckPointObject.cs" Line="4" Column="28" />
+      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="28" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

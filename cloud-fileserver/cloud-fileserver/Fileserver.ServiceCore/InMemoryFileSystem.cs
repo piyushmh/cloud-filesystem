@@ -33,7 +33,6 @@ namespace cloudfileserver
 				this.clientToFileSystemMap.Add ("piyush", filesystem);
 				Logger.Debug ("Starting checkpointing");
 				this.persistentstoreinteraction = new PersistentStoreInteraction ();
-				Logger.Debug ("Starting checkpointing1");
 				this.persistentstoreinteraction.DoCheckPoint (this);
 			} catch (Exception e) {
 				Logger.Debug("Exception caught :"  + e);

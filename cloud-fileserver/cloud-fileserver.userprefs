@@ -1,6 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="cloud-fileserver/Fileserver.PersistentStore/PersistentStoreInteraction.cs">
+    <Files>
+      <File FileName="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs" Line="35" Column="69" />
+      <File FileName="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs" Line="44" Column="25" />
+      <File FileName="cloud-fileserver/Fileserver.PersistentStore/PersistentStoreInteraction.cs" Line="25" Column="47" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

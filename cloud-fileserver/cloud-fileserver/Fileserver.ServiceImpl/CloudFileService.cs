@@ -50,11 +50,11 @@ namespace cloudfileserver
 
 	public class CloudFileService : Service
 	{
-		public InMemoryFileSystem filesystem {get;set;} //Injected by IOC
+		public InMemoryFileSystem filesystem {get;set;} //Injected by IOC, hopefully :)
 
 		/*Logger object*/
 		private static readonly log4net.ILog logger = 
-			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
+			log4net.LogManager.GetLogger(typeof(CloudFileService));
 
 		public object Get (GetFile request)
 		{
@@ -62,7 +62,6 @@ namespace cloudfileserver
 				throw new AuthenticationException ("Authentication failed");
 			}
 
-			logger.Debug ("1 : " + filesystem);
 			try {
 				UserFile file = 
 					filesystem.FetchFile (request.clientId, request.filename, request.fileowner);

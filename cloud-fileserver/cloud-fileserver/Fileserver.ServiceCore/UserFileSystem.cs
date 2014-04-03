@@ -17,7 +17,7 @@ namespace cloudfileserver
 		//private static readonly log4net.ILog Logger = 
 		//	log4net.LogManager.GetLogger(typeof(UserFileSystem));
 
-		private UserMetaData metadata;
+		public UserMetaData metadata  {get; set;}
 
 		public Dictionary<string, UserFile> filemap {get; set;}
 
@@ -74,14 +74,14 @@ namespace cloudfileserver
 			return retlist;
 		}
 
-		public UserMetaData GetMetadata ()
+		public UserMetaData GetMetadataSychronized ()
 		{
 			lock (this.privateLock) {
 				return this.metadata;
 			}
 		}
 
-		public void SetMetadata (UserMetaData metadata)
+		public void SetMetadataSychronized (UserMetaData metadata)
 		{
 			lock (this.privateLock) {
 				this.metadata = metadata;
