@@ -69,12 +69,18 @@ namespace persistentbackend
 			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
 				string parentdir = GetParentDirectoryPath( entry.Key);
 				string filepath = userpath + "files" + Path.DirectorySeparatorChar;
+				string metadatapath = userpath + "metadata" + Path.DirectorySeparatorChar;
 				Directory.CreateDirectory(filepath + parentdir);
+				Directory.CreateDirectory(metadatapath + parentdir);
+
 				string completefilepath = filepath + entry.Key;
+				string completemetadatafilepath = metadatapath + entry.Key + ".dat";
+				System.IO.File.WriteAllText( completemetadatafilepath, entry.Value.GenerateMetaDataStringFromFile());
 				File.WriteAllBytes( completefilepath, entry.Value.ReadFileContent());
 			}
 		}
 
+ 
 		private string GetParentDirectoryPath( string fullpath){
 			return Path.GetDirectoryName(fullpath) + Path.DirectorySeparatorChar;
 		}

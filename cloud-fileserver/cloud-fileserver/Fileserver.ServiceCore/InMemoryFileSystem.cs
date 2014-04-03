@@ -26,7 +26,9 @@ namespace cloudfileserver
 				Logger.Debug ("Starting constructor1");
 				UserFileSystem filesystem = new UserFileSystem (new UserMetaData ("piyush", "password", 1));
 				UserFile file = new UserFile ("x.txt", "piyush");
-				file.SetFileContent (Utils.getByteArrayFromString ("Filecontent"), 0);
+				byte[] filecontentbyte = Utils.getByteArrayFromString ("Filecontent");
+				file.SetFileContent (filecontentbyte, 0);
+				file.filesize = filecontentbyte.Length;
 				filesystem.filemap.Add ("x.txt", file);
 				filesystem.filemap.Add ("dir1/y.txt", file);
 				filesystem.filemap.Add ("dir1/dir2/z.txt", file);

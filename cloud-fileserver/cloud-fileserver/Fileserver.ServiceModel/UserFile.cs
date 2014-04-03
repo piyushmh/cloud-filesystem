@@ -37,6 +37,7 @@ namespace cloudfileserver
 			this.versionNumber = -1;
 			this.filesize = 0;
 			this.filecontent = new byte[0];
+			this.sharedwithclients = new List<string>();
 		}
 
 		public byte[] ReadFileContentSynchronized ()
