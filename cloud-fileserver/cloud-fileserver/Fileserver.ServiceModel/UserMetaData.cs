@@ -19,6 +19,12 @@ namespace cloudfileserver
 			this.password = password;
 			this.versionNumber = versionnumber;
 		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[UserMetaData: clientId={0}, password={1}, versionNumber={2}]", 
+			                      clientId, password, versionNumber);
+		}
 	}
 }
 

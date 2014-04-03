@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.SessionState;
 using ServiceStack;
 
-
+//author - piyush
 namespace persistentbackend
 {	
 	[Route("/doCheckPoint", "POST")]
@@ -13,11 +13,26 @@ namespace persistentbackend
 	{
 		public CheckPointObject checkpoint  { get; set; }
 	}
+
+	[Route("/restoreCheckPoint", "GET")]
+	public class RestoreCheckPoint : IReturn<CheckPointObject>{
+
+	}
+
 	public class PersistentStorageService : Service
 	{
-		/*Logger object*/
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(PersistentStorageService));
+
+		public object Get (RestoreCheckPoint request)
+		{
+			try{
+				logger.Debug("API call for restoring the check point");
+				return new CheckpointLogic().RestoreFileSystem();
+			} catch (Exception e) {
+				throw e;
+			}
+		}
 
 		public void Post(DoCheckPoint request)
 		{
@@ -29,6 +44,7 @@ namespace persistentbackend
 				throw e;
 			}
 		}
+
 
 	}
 }

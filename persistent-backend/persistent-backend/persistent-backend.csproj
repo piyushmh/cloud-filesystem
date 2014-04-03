@@ -79,10 +79,16 @@
     <Compile Include="PersistentStorage.Core\CheckpointLogic.cs" />
     <Compile Include="PersistentStore.Model\CheckPointObject.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="PersistentStorage.Exception\DiskuserMetaDataCorrupt.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
+    <Compile Include="Utils\DateUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PersistentStorage.ServiceImpl\" />
     <Folder Include="PersistentStorage.Core\" />
     <Folder Include="PersistentStore.Model\" />
+    <Folder Include="Utils\" />
+    <Folder Include="PersistentStorage.Exception\" />
   </ItemGroup>
 </Project>
