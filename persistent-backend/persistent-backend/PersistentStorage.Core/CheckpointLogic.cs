@@ -27,9 +27,15 @@ namespace persistentbackend
 			logger.Debug ("Restoring file system");
 			CheckPointObject checkObject = new CheckPointObject();
 			string lastcheckpointfilepath = pathprefix + lastcheckpointfilename;
+
 			List<string> lastcheckpointfilecontent = FileUtils.ReadLinesFromFile (lastcheckpointfilepath);
+			logger.Debug("Last check point time stamp read :" + lastcheckpointfilecontent[0].Trim());
 			DateTime lastcheckpointtime = DateUtils.getDatefromString(lastcheckpointfilecontent[0].Trim());
-			string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; //since there should only be a single entry
+
+			checkObject.lastcheckpoint = lastcheckpointtime;
+			logger.Debug("Poop : " + checkObject.lastcheckpoint);
+			string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; 
+			logger.Debug("Last check point path read as :" + latestcheckpointfolderpath);
 			latestcheckpointfolderpath = latestcheckpointfolderpath.Trim (); //remove any leading or trailing whitespaces
 			foreach (string userfolder in Directory.EnumerateDirectories(latestcheckpointfolderpath)) {
 				checkObject.userfilesystemlist.Add(RestoreUserFileSystem(userfolder));	
@@ -72,9 +78,7 @@ namespace persistentbackend
 
 			List<string> userfilemetadata = FileUtils.ReadLinesFromFile(metadatafilepath);
 			UserFile file = GetFileFromFileMetaData(relativefilepath, userfilemetadata);
-
-			string filecontent = File.ReadAllText(completefilepath);
-			file.filecontent = StringUtils.getByteArrayFromString(filecontent);
+			file.filecontent = File.ReadAllBytes(completefilepath);
 			return file;
 		}
 
@@ -93,9 +97,10 @@ namespace persistentbackend
 			return file;
 		}
 
+		/*Check point entry */
 		public void DoCheckPoint (CheckPointObject filesystem)
 		{
-			logger.Debug("Do check point method called for filesystem");
+			logger.Debug("Check point method called for filesystem");
 			try{
 				string path = GenerateCheckpointPath (filesystem.lastcheckpoint);
 				logger.Debug ("Creating checkpointing path :" + path);
@@ -108,8 +113,7 @@ namespace persistentbackend
 				//Now update the last check point file so that we can restore this checkpoint
 				logger.Debug ("Writing to last checkpoint file at path : " + lastcheckpointfilepath);
 				System.IO.File.WriteAllText(lastcheckpointfilepath, 
-				                            DateUtils.getStringfromDateTime(filesystem.lastcheckpoint) + 
-				                            "\n" + path);
+				          DateUtils.getStringfromDateTime(filesystem.lastcheckpoint) + "\n" + path);
 
 			}catch ( Exception e){
 					logger.Debug ("Exception :" + e);

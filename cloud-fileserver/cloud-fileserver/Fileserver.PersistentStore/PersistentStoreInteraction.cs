@@ -31,7 +31,7 @@ namespace cloudfileserver
 				checkPointObject.userfilesystemlist.Add( entry.Value);
 			}
 
-			checkPointObject.lastcheckpoint = new DateTime();
+			checkPointObject.lastcheckpoint = DateTime.Now;
 			DoCheckPoint arg = new DoCheckPoint();
 			arg.checkpoint = checkPointObject;
 			client.Post<DoCheckPointResponse>("/doCheckPoint", arg);
@@ -42,12 +42,13 @@ namespace cloudfileserver
 			logger.Debug ("Request recieved for restoring userfile system");
 			JsonServiceClient client = new JsonServiceClient (PERSISTENT_STORAGE_SERVICE_ENDPOINT);
 
-			RestoreCheckPoint arg = new RestoreCheckPoint ();
-			CheckPointObject obj = client.Post<CheckPointObject> ("/restoreCheckPoint", arg);
+			CheckPointObject obj = client.Get<CheckPointObject>("/restoreCheckPoint");
 			InMemoryFileSystem filesystem = new InMemoryFileSystem (false);
+			filesystem.lastcheckpoint = obj.lastcheckpoint;
 			foreach (UserFileSystem fs in obj.userfilesystemlist) {
 				filesystem.clientToFileSystemMap.Add( fs.metadata.clientId, fs);
 			}
+
 			return filesystem;
 		}
 	}

@@ -21,24 +21,13 @@ namespace cloudfileserver
 			try {
 				Logger.Debug ("Starting InMemoryFileSystemconstructor");
 
-				//This is just dummy, later this will be filled by ISIS bootstrapping
-				this.clientToFileSystemMap = new Dictionary<string, UserFileSystem> ();
-				Logger.Debug ("Starting constructor1");
-				UserFileSystem filesystem = new UserFileSystem (new UserMetaData ("piyush", "password", 1));
-				UserFile file = new UserFile ("x.txt", "piyush");
-				byte[] filecontentbyte = Utils.getByteArrayFromString ("Filecontent");
-				List<string> sharedclients = new List<string>();
-				sharedclients.Add("Laxman"); sharedclients.Add("Karthik");
-				file.sharedwithclients = sharedclients;
-				file.SetFileContent (filecontentbyte, 0);
-				file.filesize = filecontentbyte.Length;
-				filesystem.filemap.Add ("x.txt", file);
-				filesystem.filemap.Add ("dir1/y.txt", file);
-				filesystem.filemap.Add ("dir1/dir2/z.txt", file);
-				this.clientToFileSystemMap.Add ("piyush", filesystem);
-				Logger.Debug ("Starting checkpointing");
 				this.persistentstoreinteraction = new PersistentStoreInteraction ();
-				this.persistentstoreinteraction.DoCheckPoint (this);
+				InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
+				this.clientToFileSystemMap = fs.clientToFileSystemMap;
+				this.lastcheckpoint = fs.lastcheckpoint;
+				Logger.Debug(this.ToString());
+				Logger.Debug("XXX : " + Utils.getStringFromByteArray(this.clientToFileSystemMap["piyush"].filemap["x.txt"].filecontent));
+
 			} catch (Exception e) {
 				Logger.Debug("Exception caught :"  + e);
 				throw e;
@@ -130,11 +119,14 @@ namespace cloudfileserver
 			}
 		}
 
-		
-		//getinmemoryuserobject(synchronized)
-		//saveuserobjecttomemory(synchronized), take care of versioning he
-		
-		
-			
+		public override string ToString ()
+		{
+			string s = "[InMemoryFileSystem: [lastcheckpoint :" + this.lastcheckpoint + "] ,";
+			foreach (KeyValuePair<string, UserFileSystem> entry in this.clientToFileSystemMap) {
+				s += " [" + entry.Key + "," + entry.Value.ToString() + "]";
+			}
+			return s;
+		}
+
 	}
 }

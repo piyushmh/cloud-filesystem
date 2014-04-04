@@ -82,7 +82,20 @@ namespace cloudfileserver
 			}	
 		}
 
+		//This will be used in checkpointing
+		public string GenerateMetaDataStringFromFile ()
+		{
+			string r = this.owner + "\n" + this.filesize.ToString() + "\n" + this.versionNumber.ToString() + "\n";
+			string joined = string.Join(",", this.sharedwithclients.ToArray());
+			return  r + joined;
+		}
 
+		public override string ToString ()
+		{
+			return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
+				"sharedwithclients={4}, versionNumber={5}]", filepath, owner, Utils.getStringFromByteArray(filecontent), 
+			                      filesize, sharedwithclients, versionNumber);
+		}
 
 	}
 }

@@ -87,6 +87,16 @@ namespace cloudfileserver
 				this.metadata = metadata;
 			}
 		}
+
+		public override string ToString ()
+		{	
+			string s =  this.metadata.ToString ();
+			foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
+				s += string.Format("[FileName: {0}, FileContent:{1}]", entry.Key, entry.Value.ToString());
+			}
+			return  s;
+
+		}
 	}
 }
 
