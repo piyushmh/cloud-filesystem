@@ -11,6 +11,12 @@ namespace cloudfileserver
 
 		public DateTime lastcheckpoint { get; set; }
 
+		/*This will lock the whole file system, use it carefully
+		 For now this is only being used when the client to file system map
+		is being touched */
+
+		private object privateLock = new object();
+
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
 
@@ -51,11 +57,19 @@ namespace cloudfileserver
 			string filename, 
 			string fileowner)
 		{
-			Logger.Debug(filename);
+
+			Logger.Debug ("Fetching file : " + filename + " for client id :" + clientId +  
+			              " with  owner " + fileowner);
+
 			UserFile file = null;
-			if (this.clientToFileSystemMap.ContainsKey (fileowner)) {
+			UserFileSystem fs = getUserFSFromMapSynchronized(clientId);
+
+			//Now there no need for taking any more locks of this class. Used
+			// synchronized methods of the file system class
+
+			if (fs != null) {
 				if (this.clientToFileSystemMap [fileowner].filemap.ContainsKey (filename)) {
-					file = this.clientToFileSystemMap [fileowner].filemap [filename];
+					file = fs.filemap [filename];
 				} else {
 					throw new FileNotFoundException ("File with name :" + filename + 
 						" not found for owner : " + fileowner);
@@ -63,6 +77,7 @@ namespace cloudfileserver
 			} else {
 				throw new UserNotLoadedInMemoryException ("Client not found in memory : " + clientId);
 			}
+
 			if (! fileowner.Equals (clientId)) {
 				bool access = false;
 				foreach (string shareduser in file.sharedwithclients) {
@@ -80,12 +95,15 @@ namespace cloudfileserver
 			return file;
 		}
 
-		/*This method returns a list of all file name for a client id*/
+		/*This method returns a list of all file name for a client id
+		 This method is synchronized*/
 		public List<String> FetchFileList(string clientId)
 		{
+
+			UserFileSystem userfilesystem = getUserFSFromMapSynchronized(clientId);
 			List<String> filelist = new List<string>();
-			if (this.clientToFileSystemMap.ContainsKey (clientId)) {
-				UserFileSystem userfilesystem = this.clientToFileSystemMap[clientId];
+
+			if ( userfilesystem != null) {
 				foreach(KeyValuePair<string, UserFile> entry in  userfilesystem.filemap){
 					filelist.Add( entry.Key);
 				}
@@ -118,6 +136,98 @@ namespace cloudfileserver
 				throw new UserNotLoadedInMemoryException("Client not found in memory :" + clientId);
 			}
 		}
+
+
+		/*	Synchronized method to add user. Returns false if the user is already present
+			Otherwise creates an empty file system and adds that user with that empty file system.
+		 */
+		public bool addUserSynchronized (string clientid, string password, long versionNumber)
+		{
+		
+			UserFileSystem fs = getUserFSFromMapSynchronized(clientid);
+
+			if ( fs != null) {
+				return false;
+
+			} else {
+				UserMetaData md = new UserMetaData(clientid, password, versionNumber);
+				UserFileSystem filesystem = new UserFileSystem(md);
+				addFSToMapSynchronized(filesystem, clientid);
+			}
+			return true;
+		}
+
+
+		/*	Synchronized method to add user. Returns false if the user is already present
+			Otherwise creates an empty file system and adds that user with that empty file system.
+			This adds user metadata with version number 0.
+		 */
+		
+		public bool addUserSynchronized (string clientid, string password){
+			return addUserSynchronized( clientid, password, 0);
+		}
+
+
+		public bool updateMetadataSynchronized (UserMetaData md)
+		{
+			Logger.Debug("updating user meta data for user id :" + md.clientId);
+
+			UserFileSystem fs = getUserFSFromMapSynchronized (md.clientId);
+			if (fs != null) {
+				fs.SetMetadataSychronized(md);	
+			} else {
+				throw new UserNotLoadedInMemoryException("Update meta data operation failed for user id : " + md.clientId);
+			}
+			return true;
+		}
+
+
+		/* Synchronized method to add file for given client id 
+		   Throws exception if the user for present 
+		 */
+		public bool addFileSynchronized (string clientid, UserFile file)
+		{
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
+			if (fs != null) {
+
+				fs.addFileSynchronized(file);
+
+			} else {
+				throw new UserNotLoadedInMemoryException("Add file failed for user :" + clientid + " and file name :" + file.filepath);
+			}
+		}
+
+		public bool deleteFileSynchronized (string clientid, string filename)
+		{
+			return true;
+		}
+
+
+
+
+		private UserFileSystem getUserFSFromMapSynchronized (string clientid)
+		{
+			Logger.Debug("Fetching file system from map for user :" + clientid);
+			lock (this.privateLock) {
+				if( this.clientToFileSystemMap.ContainsKey(clientid)){
+					return this.clientToFileSystemMap[clientid];
+				}else{
+					return null;
+				}
+			}
+		}
+
+
+		private bool addFSToMapSynchronized (UserFileSystem fs, string clientid)
+		{
+			Logger.Debug ("Adding file system in map for client id  : " + clientid);
+
+			lock (this.privateLock) {
+				this.clientToFileSystemMap.Add(clientid, fs);
+				return true;
+			}
+		}
+
 
 		public override string ToString ()
 		{
