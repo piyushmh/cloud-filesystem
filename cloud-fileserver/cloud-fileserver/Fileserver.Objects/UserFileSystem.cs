@@ -32,6 +32,19 @@ namespace cloudfileserver
 
 		}
 
+		/* Internal synchronized method to get file from the user file system
+		 	Use this to read from the map
+		 */
+		private UserFile getFileSynchronized (string filename)
+		{
+			UserFile existingFile = null;
+			lock (this.privateLock) {
+				if (this.filemap.ContainsKey (filename)) {
+					existingFile = this.filemap [filename];
+				}
+			}
+			return existingFile;
+		}
 
 		/* 	Synchronized method to add file to the file system.
 			If the file is not present then the file is added. If the file
@@ -40,13 +53,9 @@ namespace cloudfileserver
 		*/
 		public bool addFileSynchronized (UserFile file)
 		{
+			Logger.Debug("Adding file with file name : " + file.filepath);
 
-			UserFile existingFile = null;
-			lock (this.privateLock) {
-				if (this.filemap.ContainsKey (file.filepath)) {
-					existingFile = this.filemap [file.filepath];
-				}
-			}
+			UserFile existingFile = getFileSynchronized(file.filepath);
 
 			bool retval = true;
 
@@ -54,6 +63,8 @@ namespace cloudfileserver
 				if( file.versionNumber > existingFile.versionNumber){
 					addFileToMapSynchronized(file);
 				}else{
+					Logger.Debug("Existing file with higher version number found for file : " + file.filepath +
+					             " , skipping updation");
 					retval = false;
 				}
 			} else {

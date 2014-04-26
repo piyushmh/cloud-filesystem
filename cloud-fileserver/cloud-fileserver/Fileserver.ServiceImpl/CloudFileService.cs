@@ -52,7 +52,6 @@ namespace cloudfileserver
 	{
 		public InMemoryFileSystem filesystem {get;set;} //Injected by IOC, hopefully :)
 
-		/*Logger object*/
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(CloudFileService));
 
@@ -81,6 +80,18 @@ namespace cloudfileserver
 			List<string> filelist = 
 				filesystem.FetchFileList(request.clientId);
 			return filelist;
+		}
+
+		public object Post( UpdateFile request){
+			logger.Debug("Request received for updating user file for client id :" + request.clientId + 
+			             +" and file name :" + request.file.filepath);
+
+			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+				throw new AuthenticationException("Authentication failed");
+			}
+
+			filesystem.addFileSynchronized(request.clientId, request.file);
+
 		}
 	}
 }

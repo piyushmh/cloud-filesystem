@@ -187,13 +187,14 @@ namespace cloudfileserver
 		 */
 		public bool addFileSynchronized (string clientid, UserFile file)
 		{
+			Logger.Debug("Adding file :" + file.filepath + " for client : " + clientid);
 			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
 			if (fs != null) {
-
-				fs.addFileSynchronized(file);
+				return fs.addFileSynchronized(file);
 
 			} else {
-				throw new UserNotLoadedInMemoryException("Add file failed for user :" + clientid + " and file name :" + file.filepath);
+				throw new UserNotLoadedInMemoryException("Add file failed for user :" 
+				                                         + clientid + " and file name :" + file.filepath);
 			}
 		}
 
