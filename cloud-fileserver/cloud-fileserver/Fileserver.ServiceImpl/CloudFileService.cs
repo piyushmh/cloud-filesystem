@@ -82,9 +82,9 @@ namespace cloudfileserver
 			return filelist;
 		}
 
-		public object Post( UpdateFile request){
-			logger.Debug("Request received for updating user file for client id :" + request.clientId + 
-			             +" and file name :" + request.file.filepath);
+		public void Post( UpdateFile request){
+			logger.Debug("Request received for updating user file for client id :" + request.clientId
+			             + " and file name :" + request.file.filepath);
 
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException("Authentication failed");
