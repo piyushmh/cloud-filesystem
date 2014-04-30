@@ -92,9 +92,14 @@ namespace cloudfileserver
 
 		public override string ToString ()
 		{
-			return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
-				"sharedwithclients={4}, versionNumber={5}]", filepath, owner, Utils.getStringFromByteArray(filecontent), 
+			try {
+				return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
+					"sharedwithclients={4}, versionNumber={5}]", filepath, owner, Utils.getStringFromByteArray (filecontent), 
 			                      filesize, sharedwithclients, versionNumber);
+			} catch (Exception e) {
+				logger.Debug(e);
+				throw e;
+			}
 		}
 
 	}

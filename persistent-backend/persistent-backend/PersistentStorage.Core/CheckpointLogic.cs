@@ -84,14 +84,18 @@ namespace persistentbackend
 
 		private UserFile GetFileFromFileMetaData (string filepath, List<string> metadata)
 		{
-			UserFile file = new UserFile (filepath, metadata [0].Trim());
+			UserFile file = new UserFile (filepath, metadata [0].Trim ());
 			file.filepath = filepath;
-			file.filesize = int.Parse(metadata [1].Trim());
-			file.versionNumber = int.Parse(metadata [2].Trim());
-			string [] clients = metadata [3].Trim ().Split (',');
-			foreach (string client in clients) {
-				if( client.Trim().Length > 0){
-					file.sharedwithclients.Add(client.Trim());
+			file.filesize = int.Parse (metadata [1].Trim ());
+			file.versionNumber = int.Parse (metadata [2].Trim ());
+
+			if (metadata.Count > 3) { //this is because this file might be shared with no one
+				string [] clients = metadata [3].Trim ().Split (',');
+			
+				foreach (string client in clients) {
+					if (client.Trim ().Length > 0) {
+						file.sharedwithclients.Add (client.Trim ());
+					}
 				}
 			}
 			return file;
@@ -149,6 +153,8 @@ namespace persistentbackend
 
 			//Now we write the file content on disk
 			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
+				//logger.Debug("File name : " + entry.Value.filepath); 
+				//logger.Debug("File content  : "  +  StringUtils.getStringFromByteArray(entry.Value.ReadFileContent()));
 				string parentdir = GetParentDirectoryPath( entry.Key);
 				string filepath = userpath + "files" + Path.DirectorySeparatorChar;
 				string metadatapath = userpath + "metadata" + Path.DirectorySeparatorChar;
