@@ -214,7 +214,7 @@ namespace cloudfileserver
 
 		private UserFileSystem getUserFSFromMapSynchronized (string clientid)
 		{
-			Logger.Debug("Fetching file system from map for user :" + clientid);
+			Logger.Debug("Synchronized fetch file system from map for user :" + clientid);
 			lock (this.privateLock) {
 				if( this.clientToFileSystemMap.ContainsKey(clientid)){
 					return this.clientToFileSystemMap[clientid];

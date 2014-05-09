@@ -1,29 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs">
     <Files>
-      <File FileName="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs" Line="32" Column="44" />
-      <File FileName="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs" Line="53" Column="26" />
-      <File FileName="cloud-fileserver/Global.asax" Line="2" Column="1" />
-      <File FileName="cloud-fileserver/AssemblyInfo.cs" Line="27" Column="10" />
-      <File FileName="cloud-fileserver/packages.config" Line="1" Column="1" />
-      <File FileName="cloud-fileserver/Log4net.config" Line="4" Column="70" />
-      <File FileName="cloud-fileserver/web.config" Line="20" Column="1" />
-      <File FileName="cloud-fileserver/Global.asax.cs" Line="20" Column="4" />
-      <File FileName="cloud-fileserver/Fileserver.PersistentStore/PersistentStoreInteraction.cs" Line="34" Column="40" />
-      <File FileName="cloud-fileserver/Fileserver.ServiceCore/UserFileSystem.cs" Line="84" Column="37" />
+      <File FileName="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs" Line="119" Column="17" />
+      <File FileName="cloud-fileserver/Fileserver.Objects/UserFileSystem.cs" Line="3" Column="17" />
+      <File FileName="cloud-fileserver/Fileserver.Objects/SharedFile.cs" Line="15" Column="3" />
+      <File FileName="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs" Line="19" Column="3" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="cloud-fileserver" expanded="True">
             <Node name="Fileserver.Exceptions" expanded="True" />
+            <Node name="Fileserver.Objects" expanded="True" />
             <Node name="Fileserver.PersistentStore" expanded="True" />
             <Node name="Fileserver.ServiceCore" expanded="True" />
-            <Node name="Fileserver.ServiceImpl" expanded="True">
-              <Node name="CloudFileService.cs" selected="True" />
-            </Node>
-            <Node name="Fileserver.ServiceModel" expanded="True" />
+            <Node name="Fileserver.ServiceImpl" expanded="True" />
             <Node name="Fileserver.Utils" expanded="True" />
             <Node name="Global.asax" expanded="True" />
           </Node>
@@ -35,4 +27,5 @@
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <AuthorInfo Name="piyush" Email="" Copyright="piyush" Company="" Trademark="" />
 </Properties>

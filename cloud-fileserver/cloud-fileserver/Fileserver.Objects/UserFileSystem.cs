@@ -20,13 +20,17 @@ namespace cloudfileserver
 		public UserMetaData metadata  {get; set;}
 		public Dictionary<string, UserFile> filemap {get; set;}
 
+		public List<SharedFile> sharedFiles { get; set; }
+
 		public UserFileSystem (){
 			this.filemap = new Dictionary<string, UserFile>();
 			this.privateLock = new object();
+			this.sharedFiles = new List<SharedFile>();
 		}
 
 		public UserFileSystem (UserMetaData metadata){	
 			this.filemap = new Dictionary<string, UserFile>();
+			this.sharedFiles = new List<SharedFile>();
 			this.privateLock = new object();
 			this.metadata = metadata;
 

@@ -89,6 +89,7 @@
     <Compile Include="Fileserver.Objects\UserFileSystem.cs" />
     <Compile Include="Fileserver.Objects\UserFile.cs" />
     <Compile Include="Fileserver.Objects\UserMetaData.cs" />
+    <Compile Include="Fileserver.Objects\SharedFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />

@@ -116,7 +116,7 @@ namespace cloudfileserver
 
 			if (! ispresent) {
 				logger.Debug ("User is already present in inmemory map, throwing back exception");
-				throw Exception ("User is already present in memory");
+				throw new Exception ("User is already present in memory");
 			} else {
 				logger.Debug ("User added succesfully");
 			}
