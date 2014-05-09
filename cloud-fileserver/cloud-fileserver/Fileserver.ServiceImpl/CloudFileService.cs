@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,13 +25,13 @@ namespace cloudfileserver
 		public string password  { get; set; }
 	}
 
-	[Route("/updatefile/{clientId}/{password}", "POST")]
-	public class UpdateFile
-	{
+	[Route("/updatefile/{clientId}/{password}","POST")]
+    public class UpdateFile
+    {
 		public string clientId {get; set;}
 		public string password {get; set;}
-		public UserFile file {get; set;}
-	}
+    	public UserFile file { get; set; }
+    }
 
 	[Route("/savefilefile/{clientId}/{password}", "POST")]
 	public class SaveFile{
@@ -47,6 +48,14 @@ namespace cloudfileserver
 		public string password {get; set;}
 		public string filepath {get; set;}
 	}
+
+	[Route("/adduser/{clientId}/{password}", "POST")]
+	public class AddUser{
+		public string clientId {get; set;}
+		public string password {get; set;}
+	}
+
+
 
 	public class CloudFileService : Service
 	{
@@ -83,14 +92,34 @@ namespace cloudfileserver
 		}
 
 		public void Post( UpdateFile request){
-			logger.Debug("Request received for updating user file for client id :" + request.clientId
-			             + " and file name :" + request.file.filepath);
 
+			logger.Debug("Request received for updating user file for client id  : " + request.clientId
+			             + " and file name : + " + request.file.filepath);
+		
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException("Authentication failed");
 			}
 
 			filesystem.addFileSynchronized(request.clientId, request.file);
+
+		}
+
+
+		public void Post (AddUser request)
+		{
+			logger.Debug ("Request received for adding user with client id :" + request.clientId 
+				+ " and password : " + request.password
+			);
+
+			bool ispresent = 
+				filesystem.addUserSynchronized (request.clientId, request.password);
+
+			if (! ispresent) {
+				logger.Debug ("User is already present in inmemory map, throwing back exception");
+				throw Exception ("User is already present in memory");
+			} else {
+				logger.Debug ("User added succesfully");
+			}
 
 		}
 	}

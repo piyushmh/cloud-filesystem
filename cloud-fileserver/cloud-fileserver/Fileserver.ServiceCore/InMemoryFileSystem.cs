@@ -24,7 +24,9 @@ namespace cloudfileserver
 
 		public InMemoryFileSystem ()
 		{
-			try {
+
+			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
+			/*try {
 				Logger.Debug ("Starting InMemoryFileSystemconstructor");
 
 				this.persistentstoreinteraction = new PersistentStoreInteraction ();
@@ -37,7 +39,7 @@ namespace cloudfileserver
 			} catch (Exception e) {
 				Logger.Debug("Exception caught :"  + e);
 				throw e;
-			}
+			}*/
 		}
 
 		public InMemoryFileSystem (bool dummyarg)
@@ -144,6 +146,8 @@ namespace cloudfileserver
 		public bool addUserSynchronized (string clientid, string password, long versionNumber)
 		{
 		
+			Logger.Debug("Adding user with client id : " + clientid + " and password : " + 
+			             password + " and version number :" + versionNumber);
 			UserFileSystem fs = getUserFSFromMapSynchronized(clientid);
 
 			if ( fs != null) {
@@ -164,6 +168,8 @@ namespace cloudfileserver
 		 */
 		
 		public bool addUserSynchronized (string clientid, string password){
+
+			Logger.Debug("Adding user with client id : " + clientid + " and password : " + password);
 			return addUserSynchronized( clientid, password, 0);
 		}
 
