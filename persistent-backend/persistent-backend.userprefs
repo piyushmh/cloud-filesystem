@@ -1,15 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/Log4net.config">
     <Files>
       <File FileName="persistent-backend/Global.asax.cs" Line="15" Column="28" />
       <File FileName="persistent-backend/packages.config" Line="1" Column="1" />
       <File FileName="persistent-backend/Global.asax" Line="1" Column="1" />
-      <File FileName="persistent-backend/PersistentStorage.ServiceImpl/PersistentStorageService.cs" Line="31" Column="8" />
+      <File FileName="persistent-backend/PersistentStorage.ServiceImpl/PersistentStorageService.cs" Line="19" Column="35" />
       <File FileName="persistent-backend/web.config" Line="18" Column="25" />
       <File FileName="persistent-backend/AssemblyInfo.cs" Line="29" Column="1" />
-      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="91" Column="1" />
-      <File FileName="persistent-backend/Log4net.config" Line="4" Column="84" />
+      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="129" Column="3" />
+      <File FileName="persistent-backend/PersistentStore.Objects/UserFileSystem.cs" Line="13" Column="17" />
+      <File FileName="persistent-backend/PersistentStore.Objects/CheckPointObject.cs" Line="10" Column="1" />
+      <File FileName="persistent-backend/Log4net.config" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

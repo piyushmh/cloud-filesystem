@@ -83,6 +83,7 @@
     <Compile Include="PersistentStore.Objects\UserFile.cs" />
     <Compile Include="PersistentStore.Objects\UserMetaData.cs" />
     <Compile Include="PersistentStore.Objects\CheckPointObject.cs" />
+    <Compile Include="PersistentStore.Objects\SharedFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PersistentStorage.ServiceImpl\" />

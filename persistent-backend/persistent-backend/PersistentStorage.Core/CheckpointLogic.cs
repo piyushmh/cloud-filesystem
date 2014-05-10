@@ -126,7 +126,7 @@ namespace persistentbackend
 
 		}
 
-
+		
 		public void DoCheckPointForUser (
 			string user,
 			string path,
@@ -153,8 +153,6 @@ namespace persistentbackend
 
 			//Now we write the file content on disk
 			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
-				//logger.Debug("File name : " + entry.Value.filepath); 
-				//logger.Debug("File content  : "  +  StringUtils.getStringFromByteArray(entry.Value.ReadFileContent()));
 				string parentdir = GetParentDirectoryPath( entry.Key);
 				string filepath = userpath + "files" + Path.DirectorySeparatorChar;
 				string metadatapath = userpath + "metadata" + Path.DirectorySeparatorChar;

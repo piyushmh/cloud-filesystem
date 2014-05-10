@@ -20,6 +20,7 @@ namespace cloudfileserver
 		public UserMetaData metadata  {get; set;}
 		public Dictionary<string, UserFile> filemap {get; set;}
 
+		//this represents the list of shared files which have been shared with this user
 		public List<SharedFile> sharedFiles { get; set; }
 
 		public UserFileSystem (){
@@ -137,7 +138,67 @@ namespace cloudfileserver
 				this.metadata = metadata;
 			}
 		}
+		
+		/* Synchronized method to delete a shared file. If the owner passed is null in the argument, 
+		 * then all the files with the given filename will be deleted
+		 */
+		public bool deleteSharedFileSynchronized(SharedFile file){
+			
+			Logger.Debug("Deleting shared file : " + file.filename);
+			bool deleted  = false;
+			List<SharedFile> replaceList = new List<SharedFile>();
+			lock( this.privateLock){
+				foreach(SharedFile f in this.sharedFiles){
+					if( f.filename.Equals(file.filename)){
+						if( file.owner!=null && !file.owner.Equals(f.owner)){
+							replaceList.Add(f);
+						}else{
+							//this means that this file has been deleted
+							deleted = true;
+						}
+					}else{ // if the file name does not match, keep the file anyway
+						replaceList.Add(f);
+					}
+				}	
+				this.sharedFiles = replaceList;
+			}
+			
+			return deleted;
+		}
+		
+		/*	Synchronized method to add a shared file to the file system
+		 */
+		public bool addSharedFileSynchronized(SharedFile file){
+			
+			bool found = checkIfSharedFilePresentSynchronized(file);
+			if( found){
+				return false;
+			}else{
+				lock( this.privateLock){//lock the shared file list and add this file
+					this.sharedFiles.Add(file);
+				}
+				return true;
+			}
+		}
 
+		/* Synhronized method to checki if the file is already 
+		 * shared with the user or not
+		 */
+		private bool checkIfSharedFilePresentSynchronized(SharedFile file){
+			bool found = false;
+			lock(this.privateLock){
+				foreach(SharedFile f in this.sharedFiles){
+					if( f.filename.Equals(file.filename) && f.owner.Equals(file.owner)){
+						found = true;
+						break;
+					}
+				}
+			}
+			return found;
+		}
+		
+		
+		
 		public override string ToString ()
 		{	
 			string s =  this.metadata.ToString ();
