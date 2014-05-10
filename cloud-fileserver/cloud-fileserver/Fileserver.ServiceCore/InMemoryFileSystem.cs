@@ -266,6 +266,7 @@ namespace cloudfileserver
 			if (! filepresent) {
 				throw new FileNotFoundException ("File not present in memory for client : " + filename + " for client : " + clientId);
 			}
+			fs.addSharedUserToFileSynchronized(filename, sharedWithUser);
 			
 			UserFileSystem sharedFS = getUserFSFromMapSynchronized (sharedWithUser);		
 			bool added = sharedFS.addSharedFileSynchronized (new SharedFile (clientId, filename));

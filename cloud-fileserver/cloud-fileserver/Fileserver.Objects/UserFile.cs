@@ -28,6 +28,33 @@ namespace cloudfileserver
 			}
 		}
 		
+		private bool ifSharedUserPresentSynchronized (string username)
+		{
+			logger.Debug ("Checking if shared user :" + username + " is present in the shared file list");
+			bool present = false;
+			lock (this.privateLock) {
+				foreach (string user in this.filemetadata.sharedwithclients) {
+					if (username.Equals (user)) {
+						present = true;
+						break;
+					}
+				}
+			}
+			return present;
+		}
+		
+		public void addSharedSynchronized (string username)
+		{
+			logger.Debug ("Adding user : " + username + " to user file :" + this.filemetadata.filepath);
+			bool present = ifSharedUserPresentSynchronized (username);
+			if (present) {
+				logger.Debug ("Shared user :" + username + " is already added to the shared list, skipping");
+			}
+			lock (this.privateLock) {
+				this.filemetadata.sharedwithclients.Add (username);
+			}
+		}
+		
 		public void initializePrivateLock ()
 		{
 			

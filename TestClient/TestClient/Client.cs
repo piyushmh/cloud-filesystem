@@ -32,14 +32,14 @@ namespace TestClient{
 			file.filecontent = Encoding.UTF8.GetBytes ("this is the new file content including poop");
 			file.filemetadata.versionNumber = 1;
 			//Console.WriteLine ("Poop " + Encoding.UTF8.GetString (file.filecontent));
-			//client.Post<Object> ("/adduser/piyush/password", new AddUser ());
-			//client.Post<Object> ("/adduser/laxman/password", new AddUser ());
+			client.Post<Object> ("/adduser/piyush/password", new AddUser ());
+			client.Post<Object> ("/adduser/laxman/password", new AddUser ());
 			client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file});
-			//client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file1});
+			client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file1});
 			//UserFileSystemMetaData md = client.Get<UserFileSystemMetaData> ("/getUserFileSystemInfo/piyush/password");
 			//Console.WriteLine (md.userMetaData.clientId + " " + md.userMetaData.password);
 			
-			//client.Post<Object> ("/shareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
+			client.Post<Object> ("/shareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/shareFile/piyush/password/y_z.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/unShareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
 		}

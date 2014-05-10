@@ -39,6 +39,20 @@ namespace cloudfileserver
 		}
 			
 	
+		/* This add the user to the shareduserlist of the file*/
+		public void addSharedUserToFileSynchronized (string filename, string user)
+		{
+			
+			Logger.Debug ("Adding shared user :" + user + " to file : " + filename);
+			UserFile file = getFileSynchronized (filename);
+			if (file == null) {
+				throw new FileNotFoundException ("File not found for user name and filename : " + user + " " + filename); 
+			}
+			
+			file.addSharedSynchronized (user);
+			return;
+		}
+		
 		public bool isFilePresentSynchronized (string filename)
 		{
 			Logger.Debug ("Checking if the file : " + filename + " is present for client " + this.metadata.clientId);
@@ -82,7 +96,7 @@ namespace cloudfileserver
 		}
 		
 		/* Internal synchronized method to get file from the user file system
-		 	Use this to read from the map
+		 	Use this to read from the map. Returns null if the file is not present in the memory
 		 */
 		private UserFile getFileSynchronized (string filename)
 		{

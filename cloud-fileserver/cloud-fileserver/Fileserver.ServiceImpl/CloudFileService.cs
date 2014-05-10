@@ -31,25 +31,25 @@ namespace cloudfileserver
     {
 		public string clientId {get; set;}
 		public string password {get; set;}
-    	public UserFile file { get; set; }
+    	public UserFile file   {get; set; }
     }
 
 	[Route("/shareFile/{clientId}/{password}/{filename}/{sharedWithUser}", "POST")]
 	public class ShareFileWithUser{
 
-		public string clientId {get; set;}
-		public string password {get; set;}
-		public string filename {get; set;}
+		public string clientId       {get; set;}
+		public string password 		 {get; set;}
+		public string filename 		 {get; set;}
 		public string sharedWithUser {get; set;}
 	}
 
 	[Route("/unShareFile/{clientId}/{password}/{filename}/{sharedWithUser}", "POST")]
 	public class UnShareFileWithUser{
 		
-		public string clientId {get; set;}
-		public string password {get; set;}
-		public string filename {get; set;}
-		public string sharedWithUser {get; set;}
+		public string clientId 		{get; set;}
+		public string password 		{get; set;}
+		public string filename 		{get; set;}
+		public string sharedWithUser{get; set;}
 	}
 	
 	
@@ -78,7 +78,7 @@ namespace cloudfileserver
 
 		public object Get (GetFile request)
 		{
-			logger.Debug ("Get file request received for file : " + request.filename + " client id : " + 
+			logger.Info ("****Request received for getting file : " + request.filename + " client id : " + 
 			              request.clientId + " and fileowner : " + request.fileowner);
 			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
@@ -98,17 +98,16 @@ namespace cloudfileserver
 
 		public object Get (GetUserFileSystemInfo request)
 		{
-			logger.Debug ("Request received for get user file system info for client id : " + request.clientId);
+			logger.Info ("****Request received for get user file system info for client id : " + request.clientId);
 			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
 			}
 			UserFileSystemMetaData md = null;
 			try {
-				
 				md = filesystem.FetchUserFileSystemMetadata (request.clientId);
 			} catch (Exception e) {
-				logger.Debug ("Exception occured while gettin user file system info for client id " + e);
+				logger.Debug ("Exception occured while gettin' user file system info for client id " + e);
 				throw e;
 			}
 			return md;
@@ -117,7 +116,7 @@ namespace cloudfileserver
 		public void Post (UpdateFile request)
 		{
 
-			logger.Debug ("Request received for updating user file for client id  : " + request.clientId
+			logger.Debug ("****Request received for updating user file for client id  : " + request.clientId
 				+ " and file name : " + request.file.filemetadata.filepath
 			);
 		
@@ -137,26 +136,32 @@ namespace cloudfileserver
 
 		public void Post (AddUser request)
 		{
-			logger.Debug ("Request received for adding user with client id :" + request.clientId 
+			logger.Debug ("****Request received for adding user with client id :" + request.clientId 
 				+ " and password : " + request.password
 			);
 
-			bool ispresent = 
+			try {
+				bool ispresent = 
 				filesystem.addUserSynchronized (request.clientId, request.password);
-
-			if (! ispresent) {
-				logger.Debug ("User is already present in inmemory map, throwing back exception");
-				throw new Exception ("User is already present in memory");
-			} else {
-				logger.Debug ("User added succesfully");
-			}
+				
+				if (! ispresent) {
+					logger.Debug ("User is already present in inmemory map, throwing back exception");
+					throw new Exception ("User is already present in memory");
+				} else {
+					logger.Debug ("User added succesfully");
+				}	
+				
+			} catch (Exception e) {
+				logger.Debug (e);
+				throw e;
+			}	
 
 		}
 		
 		public void Post (ShareFileWithUser request)
 		{
 			
-			logger.Debug ("Request received for shariing file owned by user : " + request.sharedWithUser + " by user : " 
+			logger.Debug ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
@@ -169,7 +174,7 @@ namespace cloudfileserver
 		public void Post (UnShareFileWithUser request)
 		{
 			
-			logger.Debug ("Request received for un-shariing file owned by user : " + request.sharedWithUser + " by user : " 
+			logger.Debug ("****Request received for un-sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
