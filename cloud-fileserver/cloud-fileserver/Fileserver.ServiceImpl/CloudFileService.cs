@@ -1,5 +1,6 @@
 
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web;
@@ -42,6 +43,16 @@ namespace cloudfileserver
 		public string sharedWithUser {get; set;}
 	}
 
+	[Route("/unShareFile/{clientId}/{password}/{filename}/{sharedWithUser}", "POST")]
+	public class UnShareFileWithUser{
+		
+		public string clientId {get; set;}
+		public string password {get; set;}
+		public string filename {get; set;}
+		public string sharedWithUser {get; set;}
+	}
+	
+	
 	[Route("/deletefile/{clientId}/{password}/{filename}", "POST")]
 	public class DeleteFile{
 
@@ -103,16 +114,23 @@ namespace cloudfileserver
 			return md;
 		}
 
-		public void Post( UpdateFile request){
+		public void Post (UpdateFile request)
+		{
 
-			logger.Debug("Request received for updating user file for client id  : " + request.clientId
-			             + " and file name : " + request.file.filemetadata.filepath);
+			logger.Debug ("Request received for updating user file for client id  : " + request.clientId
+				+ " and file name : " + request.file.filemetadata.filepath
+			);
 		
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-				throw new AuthenticationException("Authentication failed");
+				throw new AuthenticationException ("Authentication failed");
 			}
-
-			filesystem.addFileSynchronized(request.clientId, request.file);
+			try {
+				filesystem.addFileSynchronized (request.clientId, request.file);
+			} catch (Exception e) {
+				logger.Debug ("Exception occured while updating user file for client id  : " + request.clientId
+					+ " and file name : " + request.file.filemetadata.filepath, e);
+				throw e;
+			}
 
 		}
 
@@ -140,14 +158,26 @@ namespace cloudfileserver
 			
 			logger.Debug ("Request received for shariing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
-			); 
-			
+			); 	
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
 			}
-			
 			filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
 			
 		}
+	
+		public void Post (UnShareFileWithUser request)
+		{
+			
+			logger.Debug ("Request received for un-shariing file owned by user : " + request.sharedWithUser + " by user : " 
+				+ request.clientId + " for file name : " + request.filename
+			); 	
+			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+				throw new AuthenticationException ("Authentication failed");
+			}
+			filesystem.unShareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
+			
+		}
+	
 	}
 }

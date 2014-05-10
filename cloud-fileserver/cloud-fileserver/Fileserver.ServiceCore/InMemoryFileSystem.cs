@@ -275,6 +275,24 @@ namespace cloudfileserver
 			}
 		}
 		
+		/* Entry point for un-sharing file with a user*/
+		public void unShareFileWithUser (string clientId, string filename, string sharedWithUser)
+		{
+			Logger.Debug ("Un Sharing file " + filename + " owned by user " + clientId + " with user " + sharedWithUser);
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
+			bool filepresent = fs.isFilePresentSynchronized (filename);
+			
+			if (! filepresent) {
+				throw new FileNotFoundException ("File not present in memory for client : " + filename + " for client : " + clientId);
+			}
+			
+			UserFileSystem sharedFS = getUserFSFromMapSynchronized (sharedWithUser);		
+			bool deleted = sharedFS.deleteSharedFileSynchronized (new SharedFile (clientId, filename));
+			
+			if (!deleted){
+				Logger.Debug ("Shared file was not present , skipping deletion");
+			}
+		}
 		
 		public override string ToString ()
 		{

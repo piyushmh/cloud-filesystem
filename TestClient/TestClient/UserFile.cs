@@ -16,7 +16,7 @@ namespace TestClient
 		//metadata
 		public FileMetaData filemetadata { get; set; }
 		
-		private object privateLock = new object();
+		//private object privateLock = new object();
 		
 		public UserFile (string filepath, string owner)
 		{	

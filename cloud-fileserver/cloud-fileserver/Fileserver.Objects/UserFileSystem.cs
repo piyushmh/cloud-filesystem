@@ -129,7 +129,7 @@ namespace cloudfileserver
 		{
 			lock (this.privateLock) {
 				file.initializePrivateLock (); // this is because the files sent over the network do not have their private locks initialized
-				this.filemap.Add (file.filemetadata.filepath, file);
+				this.filemap[file.filemetadata.filepath] =  file;
 			}
 		}
 
@@ -183,33 +183,7 @@ namespace cloudfileserver
 				this.metadata = metadata;
 			}
 		}
-		
-		/* Synchronized method to delete a shared file. If the owner passed is null in the argument, 
-		 * then all the files with the given filename will be deleted
-		 */
-		public bool deleteSharedFileSynchronized(SharedFile file){
-			
-			Logger.Debug("Deleting shared file : " + file.filename);
-			bool deleted  = false;
-			List<SharedFile> replaceList = new List<SharedFile>();
-			lock( this.privateLock){
-				foreach(SharedFile f in this.sharedFiles){
-					if( f.filename.Equals(file.filename)){
-						if( file.owner!=null && !file.owner.Equals(f.owner)){
-							replaceList.Add(f);
-						}else{
-							//this means that this file has been deleted
-							deleted = true;
-						}
-					}else{ // if the file name does not match, keep the file anyway
-						replaceList.Add(f);
-					}
-				}	
-				this.sharedFiles = replaceList;
-			}
-			
-			return deleted;
-		}
+
 		
 		/*	Synchronized method to add a shared file to the file system
 		 */
@@ -228,6 +202,30 @@ namespace cloudfileserver
 			}
 		}
 
+		public bool deleteSharedFileSynchronized (SharedFile file)
+		{
+			bool found = checkIfSharedFilePresentSynchronized (file);
+			if (! found) {
+				Logger.Debug ("Shared file : " + file.filename + " not present in file system of the user " + this.metadata.clientId);
+				return false;
+			} else {
+				lock (this.privateLock) {//lock the shared file list and then make a new list removing this file
+					Logger.Debug ("Size of the share file list before removing is : " + this.sharedFiles.Count); 
+					List<SharedFile> newfilelist = new List<SharedFile> ();
+					foreach (SharedFile f in this.sharedFiles) {	
+						if (f.filename.Equals (file.filename) && f.owner.Equals (file.owner)) {
+							
+						} else {
+							newfilelist.Add (f);
+						}
+					}
+					this.sharedFiles = newfilelist;
+				}
+				Logger.Debug ("Size of the share file list after removing is : " + this.sharedFiles.Count); 
+				return true;
+			}
+		}
+		
 		/* Synhronized method to checki if the file is already 
 		 * shared with the user or not
 		 */
