@@ -18,6 +18,7 @@ namespace cloudfileserver
 			log4net.LogManager.GetLogger(typeof(UserFileSystem));
 
 		public UserMetaData metadata  {get; set;}
+		
 		public Dictionary<string, UserFile> filemap {get; set;}
 
 		//this represents the list of shared files which have been shared with this user
@@ -36,7 +37,35 @@ namespace cloudfileserver
 			this.metadata = metadata;
 
 		}
-
+			
+		public List<FileMetaData> getFileMetaDataListCopySynchronized ()
+		{
+			Logger.Debug ("Getting file meta data list for user : " + this.metadata.clientId);
+			
+			List<FileMetaData> returnList = new List<FileMetaData> ();
+			lock (this.privateLock) {
+				foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
+					returnList.Add (entry.Value.getFileMetaDataSynchronized ().cloneMetaDataObject ());
+				}
+			}
+			return returnList;
+		}
+		
+		public List<SharedFile> getSharedMetaDataListCopySynchronized ()
+		{
+			Logger.Debug ("Getting shared file list for user : " + this.metadata.clientId);
+			
+			List<SharedFile> retList = new List<SharedFile> ();
+			lock (this.privateLock) {
+		
+				foreach (SharedFile file in this.sharedFiles) {
+					retList.Add(file.cloneObject ());
+				}
+			}
+			
+			return retList;
+		}
+		
 		/* Internal synchronized method to get file from the user file system
 		 	Use this to read from the map
 		 */
@@ -58,17 +87,17 @@ namespace cloudfileserver
 		*/
 		public bool addFileSynchronized (UserFile file)
 		{
-			Logger.Debug("Adding file with file name : " + file.filepath);
+			Logger.Debug("Adding file with file name : " + file.filemetadata.filepath);
 
-			UserFile existingFile = getFileSynchronized(file.filepath);
+			UserFile existingFile = getFileSynchronized(file.filemetadata.filepath);
 
 			bool retval = true;
 
 			if (existingFile != null) {
-				if( file.versionNumber > existingFile.versionNumber){
+				if( file.filemetadata.versionNumber > existingFile.filemetadata.versionNumber){
 					addFileToMapSynchronized(file);
 				}else{
-					Logger.Debug("Existing file with higher version number found for file : " + file.filepath +
+					Logger.Debug("Existing file with higher version number found for file : " + file.filemetadata.filepath +
 					             " , skipping updation");
 					retval = false;
 				}
@@ -84,7 +113,7 @@ namespace cloudfileserver
 		private void addFileToMapSynchronized (UserFile file)
 		{
 			lock (this.privateLock) {
-				this.filemap.Add (file.filepath, file);
+				this.filemap.Add (file.filemetadata.filepath, file);
 			}
 		}
 

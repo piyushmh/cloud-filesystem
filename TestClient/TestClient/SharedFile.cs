@@ -1,6 +1,6 @@
 using System;
 
-namespace cloudfileserver
+namespace TestClient
 {
 	[Serializable]
 	public class SharedFile

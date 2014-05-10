@@ -18,8 +18,8 @@ namespace cloudfileserver
 		public string fileowner { get; set; }
 	}
 
-	[Route("/filelist/{clientId}/{password}", "GET")]
-	public class GetUserFileList : IReturn<List<String>>
+	[Route("/getUserFileSystemInfo/{clientId}/{password}", "GET")]
+	public class GetUserFileSystemInfo : IReturn<UserFileSystemMetaData>
 	{
 		public string clientId  { get; set; }
 		public string password  { get; set; }
@@ -66,6 +66,9 @@ namespace cloudfileserver
 
 		public object Get (GetFile request)
 		{
+			logger.Debug ("Get file request received for file : " + request.filename + " client id : " + 
+			              request.clientId + " and fileowner : " + request.fileowner);
+			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
 			}
@@ -81,20 +84,28 @@ namespace cloudfileserver
 			}
 		}
 
-		public object Get(GetUserFileList request){
+		public object Get (GetUserFileSystemInfo request)
+		{
+			logger.Debug ("Request received for get user file system info for client id : " + request.clientId);
+			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-				throw new AuthenticationException("Authentication failed");
+				throw new AuthenticationException ("Authentication failed");
 			}
-
-			List<string> filelist = 
-				filesystem.FetchFileList(request.clientId);
-			return filelist;
+			UserFileSystemMetaData md = null;
+			try {
+				
+				md = filesystem.FetchUserFileSystemMetadata (request.clientId);
+			} catch (Exception e) {
+				logger.Debug ("Exception occured while gettin user file system info for client id " + e);
+				throw e;
+			}
+			return md;
 		}
 
 		public void Post( UpdateFile request){
 
 			logger.Debug("Request received for updating user file for client id  : " + request.clientId
-			             + " and file name : + " + request.file.filepath);
+			             + " and file name : " + request.file.filemetadata.filepath);
 		
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException("Authentication failed");

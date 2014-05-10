@@ -54,5 +54,8 @@
     <Compile Include="UserFileSystem.cs" />
     <Compile Include="UserMetaData.cs" />
     <Compile Include="UserFile.cs" />
+    <Compile Include="FileMetaData.cs" />
+    <Compile Include="SharedFile.cs" />
+    <Compile Include="UserFileSystemMetaData.cs" />
   </ItemGroup>
 </Project>

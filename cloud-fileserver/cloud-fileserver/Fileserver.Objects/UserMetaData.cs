@@ -20,6 +20,10 @@ namespace cloudfileserver
 			this.versionNumber = versionnumber;
 		}
 
+		public UserMetaData cloneMetaData(){
+			return new UserMetaData( this.clientId, this.password, this.versionNumber);
+		}
+		
 		public override string ToString ()
 		{
 			return string.Format ("[UserMetaData: clientId={0}, password={1}, versionNumber={2}]", 

@@ -1,6 +1,6 @@
 using System;
 
-namespace cloudfileserver
+namespace persistentbackend
 {
 	[Serializable]
 	public class SharedFile

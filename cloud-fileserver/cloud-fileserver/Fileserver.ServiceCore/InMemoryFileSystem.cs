@@ -20,26 +20,28 @@ namespace cloudfileserver
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
 
-		private PersistentStoreInteraction persistentstoreinteraction;
+		//private PersistentStoreInteraction persistentstoreinteraction;
 
 		public InMemoryFileSystem ()
 		{
 
 			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
-			/*try {
+			try {
 				Logger.Debug ("Starting InMemoryFileSystemconstructor");
 
-				this.persistentstoreinteraction = new PersistentStoreInteraction ();
-				InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
-				this.clientToFileSystemMap = fs.clientToFileSystemMap;
-				this.lastcheckpoint = fs.lastcheckpoint;
-				Logger.Debug(this.ToString());
-				Logger.Debug("XXX : " + Utils.getStringFromByteArray(this.clientToFileSystemMap["piyush"].filemap["x.txt"].filecontent));
+				
+				//this.persistentstoreinteraction = new PersistentStoreInteraction ();
+				//InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
+				
+				//this.clientToFileSystemMap = fs.clientToFileSystemMap;
+				//this.lastcheckpoint = fs.lastcheckpoint;
+				//Logger.Debug(this.ToString());
+				//Logger.Debug("XXX : " + Utils.getStringFromByteArray(this.clientToFileSystemMap["piyush"].filemap["x.txt"].filecontent));
 
 			} catch (Exception e) {
 				Logger.Debug("Exception caught :"  + e);
 				throw e;
-			}*/
+			}
 		}
 
 		public InMemoryFileSystem (bool dummyarg)
@@ -52,6 +54,22 @@ namespace cloudfileserver
 		 */
 		public Boolean AuthenticateUser( string clientId, string password){
 			return true;
+		}
+		
+		
+		public UserFileSystemMetaData FetchUserFileSystemMetadata (string clientid)
+		{
+			Logger.Debug ("Fetching user file system metadata for client id : " + clientid);
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
+			if (fs == null) {
+				throw new UserNotLoadedInMemoryException ("User not loaded in memory : " + clientid);
+			}
+			UserFileSystemMetaData mdReturn = new UserFileSystemMetaData ();
+			mdReturn.userMetaData = fs.GetMetadataSychronized ();
+			mdReturn.fileMDList = fs.getFileMetaDataListCopySynchronized ();
+			mdReturn.sharedFileList = fs.getSharedMetaDataListCopySynchronized ();
+			
+			return mdReturn;
 		}
 
 		public UserFile FetchFile (
@@ -82,7 +100,7 @@ namespace cloudfileserver
 
 			if (! fileowner.Equals (clientId)) {
 				bool access = false;
-				foreach (string shareduser in file.sharedwithclients) {
+				foreach (string shareduser in file.filemetadata.sharedwithclients) {
 					if (shareduser.Equals (clientId)) {
 						access = true;
 						break;
@@ -193,14 +211,14 @@ namespace cloudfileserver
 		 */
 		public bool addFileSynchronized (string clientid, UserFile file)
 		{
-			Logger.Debug("Adding file :" + file.filepath + " for client : " + clientid);
+			Logger.Debug("Adding file : " + file.filemetadata.filepath + " for client : " + clientid);
 			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
 			if (fs != null) {
 				return fs.addFileSynchronized(file);
 
 			} else {
 				throw new UserNotLoadedInMemoryException("Add file failed for user :" 
-				                                         + clientid + " and file name :" + file.filepath);
+				                                         + clientid + " and file name :" + file.filemetadata.filepath);
 			}
 		}
 
@@ -227,7 +245,7 @@ namespace cloudfileserver
 
 		private bool addFSToMapSynchronized (UserFileSystem fs, string clientid)
 		{
-			Logger.Debug ("Adding file system in map for client id  : " + clientid);
+			Logger.Debug ("Synchronized adding file system in map for client id  : " + clientid);
 
 			lock (this.privateLock) {
 				this.clientToFileSystemMap.Add(clientid, fs);

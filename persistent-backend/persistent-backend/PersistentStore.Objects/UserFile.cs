@@ -24,8 +24,10 @@ namespace persistentbackend
 
 		public long versionNumber {get;set;}
 
+		public bool markedForDeletion { get; set; }
+		
 		private object privateLock = new object();
-
+		
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(UserFile));
 

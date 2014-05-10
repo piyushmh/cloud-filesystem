@@ -30,7 +30,7 @@ namespace persistentbackend
 		{
 			try{
 				logger.Debug("API call for restoring the check point");
-				CheckPointObject obj =  new CheckpointLogic().RestoreFileSystem();
+				CheckPointObject obj =  new CheckpointLogic().RestoreFileSystem(true);
 				return obj;
 			} catch (Exception e) {
 				logger.Debug(e);
