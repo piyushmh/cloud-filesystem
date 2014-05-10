@@ -53,7 +53,7 @@ namespace cloudfileserver
 	}
 	
 	
-	[Route("/deletefile/{clientId}/{password}/{filename}", "POST")]
+	[Route("/deletefile/{clientId}/{password}/{filepath}", "POST")]
 	public class DeleteFile{
 
 		public string clientId {get; set;}
@@ -116,7 +116,7 @@ namespace cloudfileserver
 		public void Post (UpdateFile request)
 		{
 
-			logger.Debug ("****Request received for updating user file for client id  : " + request.clientId
+			logger.Info ("****Request received for updating user file for client id  : " + request.clientId
 				+ " and file name : " + request.file.filemetadata.filepath
 			);
 		
@@ -136,7 +136,7 @@ namespace cloudfileserver
 
 		public void Post (AddUser request)
 		{
-			logger.Debug ("****Request received for adding user with client id :" + request.clientId 
+			logger.Info ("****Request received for adding user with client id :" + request.clientId 
 				+ " and password : " + request.password
 			);
 
@@ -161,7 +161,7 @@ namespace cloudfileserver
 		public void Post (ShareFileWithUser request)
 		{
 			
-			logger.Debug ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
+			logger.Info ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
 			try {
@@ -178,7 +178,7 @@ namespace cloudfileserver
 		public void Post (UnShareFileWithUser request)
 		{
 			
-			logger.Debug ("****Request received for un-sharing file owned by user : " + request.sharedWithUser + " by user : " 
+			logger.Info ("****Request received for un-sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
 			try {
@@ -194,7 +194,7 @@ namespace cloudfileserver
 	
 		public void Post (DeleteFile request)
 		{
-			logger.Debug ("****Request received for deleting file : " + request.filepath + " owned by user : " + request.clientId);
+			logger.Info ("****Request received for deleting file : " + request.filepath + " owned by user : " + request.clientId);
 			
 			try {
 				
@@ -202,12 +202,18 @@ namespace cloudfileserver
 					throw new AuthenticationException ("Authentication failed");
 				}
 				
-				//filesystem.deleteFileSynchronized(
+				bool delete = filesystem.deleteFileSynchronized (request.clientId, request.filepath);
+				
+				if (!delete) {
+					logger.Debug ("The file : " + request.filepath + " was already marked for deletion, skipping");
+				}
+				
 			} catch (Exception e) {
 				logger.Warn (e);
 				throw e;
 			}
 		}
+		
 		
 	}
 }

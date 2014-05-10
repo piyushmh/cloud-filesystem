@@ -74,7 +74,7 @@ namespace cloudfileserver
 			lock (this.privateLock) {
 				//go over each file and update ,metadata
 				foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
-					returnList.Add (entry.Value.getFileMetaDataSynchronized ());
+					returnList.Add (entry.Value.getFileMetaDataCloneSynchronized ());
 				}
 			}
 			return returnList;

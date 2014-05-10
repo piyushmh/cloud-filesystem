@@ -15,6 +15,8 @@ namespace TestClient{
 	
 	public class ShareFileWithUser{}
 	
+	public class DeleteFile{}
+	
 	public class Client
 	{
 		public static void Main ()
@@ -35,15 +37,16 @@ namespace TestClient{
 			client.Post<Object> ("/adduser/piyush/password", new AddUser ());
 			client.Post<Object> ("/adduser/laxman/password", new AddUser ());
 			client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file});
-			client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file1});
+			//client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{ file = file1});
 			//UserFileSystemMetaData md = client.Get<UserFileSystemMetaData> ("/getUserFileSystemInfo/piyush/password");
 			//Console.WriteLine (md.userMetaData.clientId + " " + md.userMetaData.password);
 			
 			client.Post<Object> ("/shareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/shareFile/piyush/password/y_z.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/unShareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
-			UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
-			Console.Write (f);
+			//UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
+			//Console.Write (f);
+			client.Post<Object> ("/deletefile/piyush/password/y_x.txt", new DeleteFile());
 		}
 
 		public static byte[] getByteArrayFromString (string str)

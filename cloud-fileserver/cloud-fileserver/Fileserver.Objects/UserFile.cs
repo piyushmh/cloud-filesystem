@@ -22,7 +22,7 @@ namespace cloudfileserver
 			log4net.LogManager.GetLogger(typeof(UserFile));
 
 
-		public FileMetaData getFileMetaDataSynchronized(){
+		public FileMetaData getFileMetaDataCloneSynchronized(){
 			lock( this.privateLock){
 				return this.filemetadata.cloneMetaDataObject();
 			}
@@ -43,6 +43,20 @@ namespace cloudfileserver
 			return present;
 		}
 
+		
+		public bool markForDeletionSynchronized ()
+		{
+			bool delete = false;
+			lock (this.privateLock) {
+				logger.Debug ("Marking file for deletion : " + this.filemetadata.filepath);
+				if (this.filemetadata.markedForDeletion == false) {
+					this.filemetadata.markedForDeletion = true;
+					delete = true;
+				}
+			}
+			return delete;
+		}
+		
 		/* Method to check if the user has access to the file by checking in the shared user list*/ 
 		public bool checkUserAccessSynchronized (string user)
 		{

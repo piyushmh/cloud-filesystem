@@ -233,8 +233,36 @@ namespace cloudfileserver
 			//1) Remove the file from the file system of the client
 			//2) Remove the file from the file system of all shared clients
 			
-			//UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
-			return false;
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
+			
+			if (fs == null) {
+				throw new UserNotLoadedInMemoryException ("User not loaded in memory :" + clientid);
+			}
+			
+			UserFile file = fs.getFileSynchronized (filename);
+			
+			if (file == null) {
+				throw new FileNotFoundException ("File not found for client id and file name : " + clientid + " " + filename);
+			}
+			
+			bool delete = file.markForDeletionSynchronized ();
+			
+			List<string> sharedClients = file.getFileMetaDataCloneSynchronized ().sharedwithclients;
+			foreach (string sharedclient in sharedClients) {
+				
+				UserFileSystem fsShared = getUserFSFromMapSynchronized (sharedclient);
+				
+				if (fsShared != null) {
+					Logger.Debug ("Removing file : " + filename + " from shared client fs : " + sharedclient);
+					fsShared.deleteSharedFileSynchronized (new SharedFile (clientid, filename));
+				
+				} else {
+					Logger.Warn ("The shared user file system is missing from the memory, see what happened");
+				}
+				
+			}
+			
+			return delete;
 		
 		}
 
