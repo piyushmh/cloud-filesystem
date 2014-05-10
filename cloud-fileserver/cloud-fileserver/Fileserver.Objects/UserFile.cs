@@ -42,6 +42,23 @@ namespace cloudfileserver
 			}
 			return present;
 		}
+
+		/* Method to check if the user has access to the file by checking in the shared user list*/ 
+		public bool checkUserAccessSynchronized (string user)
+		{
+			logger.Debug ("Checking if user : " + user + " has access to the file :" + this.filemetadata.filepath);
+			
+			bool access = false;
+			lock (this.privateLock) {
+				foreach (string u in this.filemetadata.sharedwithclients) {
+					if (u.Equals (user)) {
+						access = true;
+						break;
+					}
+				}
+			}
+			return access;
+		}
 		
 		public void addSharedSynchronized (string username)
 		{

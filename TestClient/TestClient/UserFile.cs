@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Text;
 namespace TestClient
 {
 	/*
@@ -24,6 +24,17 @@ namespace TestClient
 			this.filecontent = new byte[0];
 		}
 
+		
+		public override string ToString ()
+		{
+			try {
+				return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
+					"sharedwithclients={4}, versionNumber={5}]", filemetadata.filepath, filemetadata.owner, Encoding.UTF8.GetString(filecontent), 
+			                      filemetadata.filesize, filemetadata.sharedwithclients, filemetadata.versionNumber);
+			} catch (Exception e) {
+				throw e;
+			}
+		}
 	}
 }
 

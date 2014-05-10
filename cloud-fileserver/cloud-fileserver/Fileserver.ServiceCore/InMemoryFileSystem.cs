@@ -78,35 +78,36 @@ namespace cloudfileserver
 			string fileowner)
 		{
 
-			Logger.Debug ("Fetching file : " + filename + " for client id :" + clientId +  
-			              " with  owner " + fileowner);
+			Logger.Debug ("Fetching file : " + filename + " for client id :" + clientId + 
+				" with  owner " + fileowner
+			);
 
 			UserFile file = null;
-			UserFileSystem fs = getUserFSFromMapSynchronized(clientId);
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
 
 			//Now there no need for taking any more locks of this class. Used
 			// synchronized methods of the file system class
 
 			if (fs != null) {
-				if (this.clientToFileSystemMap [fileowner].filemap.ContainsKey (filename)) {
+				/*if (this.clientToFileSystemMap [fileowner].filemap.ContainsKey (filename)) {
 					file = fs.filemap [filename];
 				} else {
+					
+				}*/
+				file = fs.getFileSynchronized (filename);
+				if (file == null) {
 					throw new FileNotFoundException ("File with name :" + filename + 
-						" not found for owner : " + fileowner);
+						" not found for owner : " + fileowner
+					);
 				}
+				
 			} else {
 				throw new UserNotLoadedInMemoryException ("Client not found in memory : " + clientId);
 			}
 
 			if (! fileowner.Equals (clientId)) {
-				bool access = false;
-				foreach (string shareduser in file.filemetadata.sharedwithclients) {
-					if (shareduser.Equals (clientId)) {
-						access = true;
-						break;
-					}
-				}
-				if (!access) {
+				bool access = file.checkUserAccessSynchronized (clientId);
+				if (! access) {
 					throw new AccessViolationException ("File : " + filename + " owned by " + 
 						fileowner + "is not shared with " + clientId
 					);
@@ -224,9 +225,17 @@ namespace cloudfileserver
 			}
 		}
 
+		/* Entry point for delete file*/
 		public bool deleteFileSynchronized (string clientid, string filename)
 		{
-			return true;
+			Logger.Debug ("Deleting file : " + filename + " owned by : " + clientid);
+			
+			//1) Remove the file from the file system of the client
+			//2) Remove the file from the file system of all shared clients
+			
+			//UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
+			return false;
+		
 		}
 
 

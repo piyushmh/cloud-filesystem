@@ -98,7 +98,7 @@ namespace cloudfileserver
 		/* Internal synchronized method to get file from the user file system
 		 	Use this to read from the map. Returns null if the file is not present in the memory
 		 */
-		private UserFile getFileSynchronized (string filename)
+		public UserFile getFileSynchronized (string filename)
 		{
 			UserFile existingFile = null;
 			lock (this.privateLock) {
@@ -168,14 +168,14 @@ namespace cloudfileserver
 			return obj as UserFileSystem;
 		}
 
-		public List<String> GetFileListSynchronized ()
+		public List<String> GetClonedFileListSynchronized ()
 		{
 			lock (privateLock) {
-				return this.GetFileList();
+				return this.GetClonedFileList();
 			}
 		}
 
-		public List<String> GetFileList ()
+		public List<String> GetClonedFileList ()
 		{
 			List<string> retlist = new List<string>();
 			foreach(KeyValuePair<string, UserFile> entry in  this.filemap){

@@ -42,6 +42,8 @@ namespace TestClient{
 			client.Post<Object> ("/shareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/shareFile/piyush/password/y_z.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/unShareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
+			UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
+			Console.Write (f);
 		}
 
 		public static byte[] getByteArrayFromString (string str)

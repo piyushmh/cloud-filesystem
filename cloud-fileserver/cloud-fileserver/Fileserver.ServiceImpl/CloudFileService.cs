@@ -164,11 +164,15 @@ namespace cloudfileserver
 			logger.Debug ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
-			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-				throw new AuthenticationException ("Authentication failed");
+			try {
+				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+					throw new AuthenticationException ("Authentication failed");
+				}
+				filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
 			}
-			filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
-			
 		}
 	
 		public void Post (UnShareFileWithUser request)
@@ -177,12 +181,33 @@ namespace cloudfileserver
 			logger.Debug ("****Request received for un-sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
-			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-				throw new AuthenticationException ("Authentication failed");
+			try {
+				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+					throw new AuthenticationException ("Authentication failed");
+				}
+				filesystem.unShareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
 			}
-			filesystem.unShareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
-			
 		}
 	
+		public void Post (DeleteFile request)
+		{
+			logger.Debug ("****Request received for deleting file : " + request.filepath + " owned by user : " + request.clientId);
+			
+			try {
+				
+				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+					throw new AuthenticationException ("Authentication failed");
+				}
+				
+				//filesystem.deleteFileSynchronized(
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
+			}
+		}
+		
 	}
 }
