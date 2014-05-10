@@ -41,7 +41,7 @@ namespace cloudfileserver
 	
 		public bool isFilePresentSynchronized (string filename)
 		{
-			Logger.Debug ("Checking if the file : " + filename + " for client " + this.metadata.clientId);
+			Logger.Debug ("Checking if the file : " + filename + " is present for client " + this.metadata.clientId);
 			
 			bool present = false;
 			lock (this.privateLock) {
@@ -217,9 +217,11 @@ namespace cloudfileserver
 			
 			bool found = checkIfSharedFilePresentSynchronized(file);
 			if( found){
+				Logger.Debug("Shared file : " + file.filename + " already present in file system of the user " + this.metadata.clientId);
 				return false;
 			}else{
 				lock( this.privateLock){//lock the shared file list and add this file
+					Logger.Debug("Adding shared file :" + file.filename + " into the shared file list of user : " + this.metadata.clientId);
 					this.sharedFiles.Add(file);
 				}
 				return true;

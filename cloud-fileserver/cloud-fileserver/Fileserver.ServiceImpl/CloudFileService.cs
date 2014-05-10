@@ -138,7 +138,7 @@ namespace cloudfileserver
 		public void Post (ShareFileWithUser request)
 		{
 			
-			logger.Debug ("Request received for shariing file with user : " + request.sharedWithUser + " by user : " 
+			logger.Debug ("Request received for shariing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 
 			

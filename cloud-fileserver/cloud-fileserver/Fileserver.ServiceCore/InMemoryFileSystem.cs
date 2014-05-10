@@ -259,7 +259,7 @@ namespace cloudfileserver
 		/* Entry point for sharing file with a user*/
 		public void shareFileWithUser (string clientId, string filename, string sharedWithUser)
 		{
-			Logger.Debug ("Sharing file " + filename + " by user " + clientId + " with user " + sharedWithUser);
+			Logger.Debug ("Sharing file " + filename + " owned by user " + clientId + " with user " + sharedWithUser);
 			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
 			bool filepresent = fs.isFilePresentSynchronized (filename);
 			
