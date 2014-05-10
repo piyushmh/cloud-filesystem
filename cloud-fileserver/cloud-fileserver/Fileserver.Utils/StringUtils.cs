@@ -21,6 +21,14 @@ namespace cloudfileserver
 			string s = Encoding.UTF8.GetString(b);
 			return s;
         }
+		
+		public static string getFormattedStringFromUnderScored (string s)
+		{
+			if (s == null)
+				return null;
+			
+			return s.Replace ("_", "/");
+		}
 	}
 }
 

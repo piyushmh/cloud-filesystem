@@ -33,12 +33,13 @@ namespace cloudfileserver
     	public UserFile file { get; set; }
     }
 
-	[Route("/savefilefile/{clientId}/{password}", "POST")]
-	public class SaveFile{
+	[Route("/shareFile/{clientId}/{password}/{filename}/{sharedWithUser}", "POST")]
+	public class ShareFileWithUser{
 
 		public string clientId {get; set;}
 		public string password {get; set;}
-		public UserFile file {get; set;}
+		public string filename {get; set;}
+		public string sharedWithUser {get; set;}
 	}
 
 	[Route("/deletefile/{clientId}/{password}/{filename}", "POST")]
@@ -132,6 +133,21 @@ namespace cloudfileserver
 				logger.Debug ("User added succesfully");
 			}
 
+		}
+		
+		public void Post (ShareFileWithUser request)
+		{
+			
+			logger.Debug ("Request received for shariing file with user : " + request.sharedWithUser + " by user : " 
+				+ request.clientId + " for file name : " + request.filename
+			); 
+			
+			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+				throw new AuthenticationException ("Authentication failed");
+			}
+			
+			filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
+			
 		}
 	}
 }

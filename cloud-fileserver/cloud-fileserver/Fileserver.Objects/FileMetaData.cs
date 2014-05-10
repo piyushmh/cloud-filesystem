@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace cloudfileserver
 {
+	[Serializable]
 	public class FileMetaData
 	{
 		public string filepath { get; set;}

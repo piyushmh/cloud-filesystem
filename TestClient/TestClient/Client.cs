@@ -22,7 +22,7 @@ namespace TestClient{
 		public static void Main ()
 		{
 
-			JsonServiceClient client = new JsonServiceClient ("http://127.0.0.1:8080");
+			/*JsonServiceClient client = new JsonServiceClient ("http://127.0.0.1:8080");
 			//UpdateFile arg = new UpdateFile();
 			//UserFile file = new UserFile ("x.txt", "piyush");
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
@@ -31,9 +31,14 @@ namespace TestClient{
 			file.filemetadata.sharedwithclients.Add ("garima");
 			file.filecontent = Encoding.UTF8.GetBytes ("this is the file content");
 			//client.Post<Object> ("/adduser/piyush/password", new AddUser ());
+			client.Post<Object> ("/adduser/laxman/password", new AddUser ());
 			client.Post<object> ("/updatefile/piyush/password", new UpdateFile{ file = file});
 			UserFileSystemMetaData md = client.Get<UserFileSystemMetaData> ("/getUserFileSystemInfo/piyush/password");
 			Console.WriteLine (md.userMetaData.clientId + " " + md.userMetaData.password);
+			*/
+			
+			string s = "x_y_z.txt";
+			Console.WriteLine(s.Replace("_", "/"));
 		}
 
 		public static byte[] getByteArrayFromString (string str)

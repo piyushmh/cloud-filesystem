@@ -38,14 +38,29 @@ namespace cloudfileserver
 
 		}
 			
+	
+		public bool isFilePresentSynchronized (string filename)
+		{
+			Logger.Debug ("Checking if the file : " + filename + " for client " + this.metadata.clientId);
+			
+			bool present = false;
+			lock (this.privateLock) {
+				if (this.filemap.ContainsKey (filename)) {
+					present = true;
+				}
+			}
+			return present;
+		}
+		
 		public List<FileMetaData> getFileMetaDataListCopySynchronized ()
 		{
 			Logger.Debug ("Getting file meta data list for user : " + this.metadata.clientId);
 			
 			List<FileMetaData> returnList = new List<FileMetaData> ();
 			lock (this.privateLock) {
+				//go over each file and update ,metadata
 				foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
-					returnList.Add (entry.Value.getFileMetaDataSynchronized ().cloneMetaDataObject ());
+					returnList.Add (entry.Value.getFileMetaDataSynchronized ());
 				}
 			}
 			return returnList;
@@ -113,6 +128,7 @@ namespace cloudfileserver
 		private void addFileToMapSynchronized (UserFile file)
 		{
 			lock (this.privateLock) {
+				file.initializePrivateLock (); // this is because the files sent over the network do not have their private locks initialized
 				this.filemap.Add (file.filemetadata.filepath, file);
 			}
 		}

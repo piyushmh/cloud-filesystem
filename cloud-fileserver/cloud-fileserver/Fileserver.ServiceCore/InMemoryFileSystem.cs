@@ -164,14 +164,16 @@ namespace cloudfileserver
 		public bool addUserSynchronized (string clientid, string password, long versionNumber)
 		{
 		
-			Logger.Debug("Adding user with client id : " + clientid + " and password : " + 
-			             password + " and version number :" + versionNumber);
-			UserFileSystem fs = getUserFSFromMapSynchronized(clientid);
+			Logger.Debug ("Adding user with client id : " + clientid + " and password : " + 
+				password + " and version number :" + versionNumber
+			);
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
 
-			if ( fs != null) {
+			if (fs != null) {
 				return false;
 
 			} else {
+				Logger.Debug ("User : " + clientid + " present in map, adding");
 				UserMetaData md = new UserMetaData(clientid, password, versionNumber);
 				UserFileSystem filesystem = new UserFileSystem(md);
 				addFSToMapSynchronized(filesystem, clientid);
@@ -254,6 +256,26 @@ namespace cloudfileserver
 		}
 
 
+		/* Entry point for sharing file with a user*/
+		public void shareFileWithUser (string clientId, string filename, string sharedWithUser)
+		{
+			Logger.Debug ("Sharing file " + filename + " by user " + clientId + " with user " + sharedWithUser);
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
+			bool filepresent = fs.isFilePresentSynchronized (filename);
+			
+			if (! filepresent) {
+				throw new FileNotFoundException ("File not present in memory for client : " + filename + " for client : " + clientId);
+			}
+			
+			UserFileSystem sharedFS = getUserFSFromMapSynchronized (sharedWithUser);		
+			bool added = sharedFS.addSharedFileSynchronized (new SharedFile (clientId, filename));
+			
+			if (!added){
+				Logger.Debug ("Shared file was already present, skipping");
+			}
+		}
+		
+		
 		public override string ToString ()
 		{
 			string s = "[InMemoryFileSystem: [lastcheckpoint :" + this.lastcheckpoint + "] ,";

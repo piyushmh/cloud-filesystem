@@ -28,6 +28,16 @@ namespace cloudfileserver
 			}
 		}
 		
+		public void initializePrivateLock ()
+		{
+			
+			logger.Debug ("Setting private lock to a new object for file : " + this.filemetadata.filepath);
+			if (this.privateLock == null) {
+				this.privateLock = new object ();
+			} else {
+				logger.Debug ("Private lock is already initiazed for filr  : " + this.filemetadata.filepath + " skipping");
+			}
+		}
 		
 		public UserFile (string filepath, string owner)
 		{	

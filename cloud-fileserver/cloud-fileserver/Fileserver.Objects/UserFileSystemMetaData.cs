@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace cloudfileserver
 {
+	[Serializable]
 	public class UserFileSystemMetaData
 	{
 		//this is the user meta data object
