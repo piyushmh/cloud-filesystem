@@ -22,11 +22,17 @@ namespace TestClient{
 		public static void Main ()
 		{
 
-			JsonServiceClient client = new JsonServiceClient ("http://127.0.0.1:8080");
+			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8081");
 			//UpdateFile arg = new UpdateFile();
 			//UserFile file = new UserFile ("x.txt", "piyush");
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
 			//arg.file = file;
+			
+			CheckPointObject obj = client.Get<CheckPointObject> ("/restoreCheckPoint");
+			Console.WriteLine (obj.lastcheckpoint);
+			Console.WriteLine (obj.ToJson());
+			
+			/*
 			UserFile file1 = new UserFile ("y_z.txt", "piyush");
 			file1.filecontent = Encoding.UTF8.GetBytes ("this");
 			UserFile file = new UserFile ("y_x.txt", "piyush");
@@ -48,6 +54,7 @@ namespace TestClient{
 			//UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
 			//Console.Write (f);
 			client.Post<Object> ("/deletefile/piyush/password/y_x.txt", new DeleteFile());
+			*/
 		}
 
 		public static byte[] getByteArrayFromString (string str)

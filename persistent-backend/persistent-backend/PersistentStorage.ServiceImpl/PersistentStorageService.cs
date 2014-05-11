@@ -42,7 +42,7 @@ namespace persistentbackend
 		{
 			try{
 				logger.Debug("API Request received for checkpointing : + " + request.username + " " + request.password);
-				new CheckpointLogic().DoCheckPoint(request.checkpoint);
+				//new CheckpointLogic().DoCheckPoint(request.checkpoint);
 
 			} catch (Exception e) {
 				logger.Debug(e);

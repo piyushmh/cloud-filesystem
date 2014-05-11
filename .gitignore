@@ -1,2 +1,5 @@
 #excluding the logs folder
 logs/*
+
+#excluding the persistent disk folder
+persistent-disk/*

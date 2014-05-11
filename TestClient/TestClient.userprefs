@@ -1,12 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="TestClient/UserFile.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="TestClient/Client.cs">
     <Files>
-      <File FileName="TestClient/Client.cs" Line="36" Column="1" />
+      <File FileName="TestClient/Client.cs" Line="34" Column="53" />
       <File FileName="TestClient/CheckPointObject.cs" Line="1" Column="1" />
-      <File FileName="TestClient/UserFileSystem.cs" Line="1" Column="1" />
+      <File FileName="TestClient/UserFileSystem.cs" Line="16" Column="1" />
       <File FileName="TestClient/UserMetaData.cs" Line="1" Column="1" />
-      <File FileName="TestClient/UserFile.cs" Line="41" Column="5" />
+      <File FileName="TestClient/UserFile.cs" Line="1" Column="3" />
+      <File FileName="TestClient/FileMetaData.cs" Line="40" Column="3" />
+      <File FileName="TestClient/UserFileSystemMetaData.cs" Line="1" Column="1" />
+      <File FileName="TestClient/packages.config" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
