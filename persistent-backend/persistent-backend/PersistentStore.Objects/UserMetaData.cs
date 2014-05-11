@@ -16,16 +16,16 @@ namespace persistentbackend
 		public long totalFileSystemSizeBytes {get; set;} //in bytes
 		
 		
-		public UserMetaData (string clientId, string password, long versionnumber)
+		public UserMetaData (string clientId, string password, long versionnumber, long totalFileSystemSizeInBytes)
 		{
 			this.clientId = clientId;
 			this.password = password;
 			this.versionNumber = versionnumber;
-			this.totalFileSystemSizeBytes = 0;
+			this.totalFileSystemSizeBytes = totalFileSystemSizeInBytes;
 		}
 
 		public UserMetaData cloneMetaData(){
-			return new UserMetaData( this.clientId, this.password, this.versionNumber);
+			return new UserMetaData( this.clientId, this.password, this.versionNumber, this.totalFileSystemSizeBytes);
 		}
 		
 		public override string ToString ()

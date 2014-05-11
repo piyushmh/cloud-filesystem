@@ -13,6 +13,14 @@ namespace persistentbackend
 		public CheckPointObject (){
 			this.userfilesystemlist = new List<UserFileSystem>();
 		}
-		
+		public override string ToString ()
+		{
+			string toreturn = "";
+			foreach (UserFileSystem fs in this.userfilesystemlist) {
+				toreturn += fs.ToString ();
+				toreturn += "\n***";
+			}
+			return toreturn;
+		}
 	}
 }

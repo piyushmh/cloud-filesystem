@@ -20,7 +20,7 @@ namespace persistentbackend
 			string line;
 
 			while((line = file.ReadLine()) != null){
-				retlist.Add(line);
+				retlist.Add(line.Trim());
 			}
 			file.Close();
 			return retlist;

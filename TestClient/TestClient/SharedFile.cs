@@ -16,6 +16,13 @@ namespace TestClient
 			sf.filename = this.filename;
 			return sf;
 		}
+		
+		public SharedFile (string owner, string filename)
+		{
+			this.owner = owner;
+			this.filename = filename;
+		}
+		
 		public SharedFile ()
 		{
 		}

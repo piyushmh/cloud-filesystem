@@ -16,6 +16,14 @@ namespace TestClient
 			this.lastcheckpoint = new DateTime ();
 		}
 		
-		
+		public override string ToString ()
+		{
+			string toreturn = "";
+			foreach (UserFileSystem fs in this.userfilesystemlist) {
+				toreturn += fs.ToString ();
+				toreturn += "\n";
+			}
+			return toreturn;
+		}
 	}
 }

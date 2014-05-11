@@ -181,7 +181,7 @@ namespace cloudfileserver
 
 			} else {
 				Logger.Debug ("User : " + clientid + " present in map, adding");
-				UserMetaData md = new UserMetaData(clientid, password, versionNumber);
+				UserMetaData md = new UserMetaData(clientid, password, versionNumber,0);
 				UserFileSystem filesystem = new UserFileSystem(md);
 				addFSToMapSynchronized(filesystem, clientid);
 			}

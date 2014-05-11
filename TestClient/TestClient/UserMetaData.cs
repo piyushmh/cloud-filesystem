@@ -15,22 +15,22 @@ namespace TestClient
 		
 		public long totalFileSystemSizeBytes {get; set;} //in bytes
 		
-		public UserMetaData (string clientId, string password, long versionnumber)
+		public UserMetaData (string clientId, string password, long versionnumber, long totalFileSystemSizeBytes)
 		{
 			this.clientId = clientId;
 			this.password = password;
 			this.versionNumber = versionnumber;
-			this.totalFileSystemSizeBytes = 0;
+			this.totalFileSystemSizeBytes = totalFileSystemSizeBytes;
 		}
 
 		public UserMetaData cloneMetaData(){
-			return new UserMetaData( this.clientId, this.password, this.versionNumber);
+			return new UserMetaData( this.clientId, this.password, this.versionNumber, this.totalFileSystemSizeBytes);
 		}
 		
 		public override string ToString ()
 		{
-			return string.Format ("[UserMetaData: clientId={0}, password={1}, versionNumber={2}]", 
-			                      clientId, password, versionNumber);
+			return string.Format ("[UserMetaData: clientId={0}, password={1}, versionNumber={2}, totalsizeinbytes={3}]", 
+			                      clientId, password, versionNumber, totalFileSystemSizeBytes);
 		}
 	}
 }

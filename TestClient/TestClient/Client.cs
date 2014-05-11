@@ -32,6 +32,25 @@ namespace TestClient{
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
 			//arg.file = file;
 			CheckPointObject obj = new CheckPointObject ();
+			UserFileSystem fs = new UserFileSystem ();
+			UserFile file = new UserFile ("x_z.txt", "piyush");
+			file.filecontent = Encoding.UTF8.GetBytes ("this");
+			file.filemetadata.filesize = file.filecontent.Length;
+			file.filemetadata.versionNumber = 1;
+			if (fs.filemap == null) {
+				Console.WriteLine ("File System is null");
+			}
+			
+			Console.WriteLine (file);
+			Console.WriteLine (fs.filemap.Count);
+			Console.WriteLine (file.filemetadata);
+			Console.WriteLine (file.filemetadata.filepath);
+			fs.filemap [file.filemetadata.filepath] = file;
+			//fs.filemap.Add (file.filemetadata.filepath, file);
+			fs.metadata = new UserMetaData ("piyush", "password", 2, 0);
+			fs.metadata.totalFileSystemSizeBytes = 37 + file.filemetadata.filesize;
+			fs.sharedFiles.Add (new SharedFile ("laxman", "x_y.txt"));		
+			obj.userfilesystemlist.Add (fs);
 			client.Post<Object> ("/doCheckPoint", new DoCheckPoint{ checkPointObject = obj});
 			//Console.WriteLine (obj.lastcheckpoint);
 			//Console.WriteLine (obj.ToJson());

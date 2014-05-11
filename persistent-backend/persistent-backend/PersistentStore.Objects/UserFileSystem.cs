@@ -334,9 +334,9 @@ namespace persistentbackend
 		
 		public override string ToString ()
 		{	
-			string s =  this.metadata.ToString ();
+			string s = "";
 			foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
-				s += string.Format("[FileName: {0}, FileContent:{1}]", entry.Key, entry.Value.ToString());
+				s += string.Format ("[FileSystemMetadata: {0} File:{1}]", this.metadata.ToString(),entry.Value.ToString());
 			}
 			return  s;
 

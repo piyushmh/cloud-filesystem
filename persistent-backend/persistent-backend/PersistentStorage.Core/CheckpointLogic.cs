@@ -37,7 +37,6 @@ namespace persistentbackend
 
 			logger.Debug ("Read last checkpoint time as :" + lastcheckpointtime);
 			checkObject.lastcheckpoint = lastcheckpointtime;
-			logger.Debug ("Poop : " + checkObject.lastcheckpoint);
 			if (lastcheckpointfilecontent.Count < 2)
 				throw new DiskuserMetaDataCorrupt ("Something wrong with the last check point file path, check!!");
 			
@@ -48,7 +47,7 @@ namespace persistentbackend
 				checkObject.userfilesystemlist.Add (RestoreUserFileSystem (userfolder, restoreFileContent));	
 			}
 			
-			logger.Debug ("Returning the check point object as :" + checkObject.userfilesystemlist.Capacity);
+			logger.Debug ("Returning the check point object as :" + checkObject.userfilesystemlist.Count);
 			return checkObject;
 		}
 		
@@ -65,7 +64,7 @@ namespace persistentbackend
 			
 			//First restore the user info
 			List<String> metadatafilecontent = FileUtils.ReadLinesFromFile (userinfofilepath);
-			if (metadatafilecontent.Count < 3) {
+			if (metadatafilecontent.Count < 4) {
 				throw new DiskuserMetaDataCorrupt ("Disk meta data corrupt for user: " + user);
 			}
 
@@ -73,8 +72,12 @@ namespace persistentbackend
 			userfilesystem.metadata = new UserMetaData (
 				metadatafilecontent [0].Trim (), 
 				metadatafilecontent [1].Trim (),
-				int.Parse (metadatafilecontent [2].Trim ())
+				int.Parse (metadatafilecontent [2].Trim ()),
+				long.Parse (metadatafilecontent [3].Trim ())
 			);
+			
+			logger.Fatal ("SEE : " + long.Parse (metadatafilecontent [3].Trim ()));	
+			logger.Fatal ("SEE : " + userfilesystem.metadata.ToString());			
 			
 			//now restore the shared files
 			List<string> sharedFileNames = FileUtils.ReadLinesFromFile (sharedfileinfofilepath);
@@ -94,8 +97,10 @@ namespace persistentbackend
 			
 			foreach (string filepath in userfilenames) {
 				String relativeDiskFilePath = filepath.Trim ();
-				if (relativeDiskFilePath.Length > 0){
-					relativeDiskFilePath = FileUtils.getDiskPathFromMemoryPath(relativeDiskFilePath.Substring (1));
+				if (relativeDiskFilePath.Length > 0) {	
+					if (relativeDiskFilePath [0] == '_')
+						relativeDiskFilePath = relativeDiskFilePath.Substring (1);
+					relativeDiskFilePath = FileUtils.getDiskPathFromMemoryPath(relativeDiskFilePath);
 					UserFile file = RestoreUserFile(userdir, relativeDiskFilePath, restoreFileContent);
 					userfilesystem.filemap.Add(FileUtils.getMemoryPathFromDiskPath(filepath.Trim()), file);
 				}
@@ -143,6 +148,7 @@ namespace persistentbackend
 					}
 				}
 			}
+			logger.Debug ("Recovered metadata as : " + file.filemetadata);
 			return file;
 		}
 	
@@ -152,16 +158,14 @@ namespace persistentbackend
 		public void DoCheckPointAllUsers (CheckPointObject filesystem)
 		{
 			logger.Debug ("Do Check point method called for filesystem");
-			
 			CheckPointObject oldcheckpointobject = RestoreFileSystem (true); //load the old file in memory to merege
-			if (oldcheckpointobject == null) {
-				logger.Debug ("DAFUQ");
-			}
-			logger.Debug ("Poop  : " + oldcheckpointobject.ToString ());
+		
+			//logger.Debug ("POOP1  : " + oldcheckpointobject.userfilesystemlist[0].metadata.totalFileSystemSizeBytes);
+			//logger.Debug ("POOP2  : " + filesystem.userfilesystemlist[0].metadata.totalFileSystemSizeBytes);
 			filesystem = mergeCheckPointObjects (filesystem, oldcheckpointobject);
 			
-			logger.Debug (filesystem);
-			/*
+			//logger.Debug (filesystem);
+			
 			try{
 				string path = GenerateCheckpointPath (filesystem.lastcheckpoint);
 				logger.Debug ("Creating checkpointing path :" + path);
@@ -179,19 +183,75 @@ namespace persistentbackend
 			}catch ( Exception e){
 					logger.Debug ("Exception :" + e);
 				throw e;
-			}*/
+			}
 
 		}
+		
+		
+		public void DoCheckPointForUser (
+			string user,
+			string path,
+			UserFileSystem userfilesystem)
+		{
+
+			logger.Debug ("Check pointing for user and path :" + user + " " + path);
+
+			string userpath = path + user + Path.DirectorySeparatorChar; //Appending '/' for linux and '\' on windows
+			Directory.CreateDirectory (userpath);
+			string usermetadatafilepath = userpath + this.USERINFOFILENAME;
+			string sharedfilemetadatapath = userpath + this.SHAREDFILEINFONAME;
+			string filemetadatafilepath = userpath + this.FILEINFOFILENAME;
+			
+			string usermetadata = userfilesystem.metadata.clientId + 
+				"\n" + userfilesystem.metadata.password +
+				"\n" + userfilesystem.metadata.versionNumber + 
+				"\n" + userfilesystem.metadata.totalFileSystemSizeBytes;
+			
+			string sharefilecontent = "";
+			foreach (SharedFile sharedfile in userfilesystem.sharedFiles) {
+				sharefilecontent += sharedfile.owner + " " + sharedfile.filename + "\n";
+			}
+			
+			string filelistcontent = "";
+			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
+				filelistcontent += entry.Key + "\n";
+			}
+			
+			filelistcontent = filelistcontent.Trim ();
+			logger.Debug ("Writing filelist file at path :" + filemetadatafilepath + " with content :\n" + filelistcontent);
+			System.IO.File.WriteAllText (filemetadatafilepath, filelistcontent);
+			
+			sharefilecontent = sharefilecontent.Trim ();
+			logger.Debug ("Writing sharedfilelist file at path :" + sharedfilemetadatapath + " with content :\n" + sharefilecontent);
+			System.IO.File.WriteAllText (sharedfilemetadatapath, sharefilecontent);
+
+			//Update the meta data file
+			logger.Debug ("Writing meta file at path :" + usermetadatafilepath + " with content :\n" + usermetadata);
+			System.IO.File.WriteAllText (usermetadatafilepath, usermetadata);
+
+			
+			
+			//Now we write the file content on disk
+			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
+				string parentdir = GetParentDirectoryPath( entry.Key);
+				string filepath = userpath + "files" + Path.DirectorySeparatorChar;
+				string metadatapath = userpath + "metadata" + Path.DirectorySeparatorChar;
+				Directory.CreateDirectory(filepath + parentdir);
+				Directory.CreateDirectory(metadatapath + parentdir);
+
+				string completefilepath = filepath + entry.Key;
+				string completemetadatafilepath = metadatapath + entry.Key + ".dat";
+				System.IO.File.WriteAllText( completemetadatafilepath, entry.Value.GenerateMetaDataStringFromFile());
+				File.WriteAllBytes( completefilepath, entry.Value.ReadFileContent());
+			}
+		}
+
 		
 		
 		//Merge the check point objects
 		private CheckPointObject mergeCheckPointObjects (CheckPointObject newimage, CheckPointObject oldimage)
 		{
 			logger.Debug ("Merge check point objects");
-			logger.Debug ("Yo : " + newimage);
-			logger.Debug ("Yo1 : " + oldimage);
-			logger.Debug ("POOP2 : " + newimage.userfilesystemlist.Capacity);
-			logger.Debug ("POOP3 : " + oldimage.userfilesystemlist.Capacity);
 			CheckPointObject retObject = new CheckPointObject (); //ret object
 			foreach (UserFileSystem oldfs in oldimage.userfilesystemlist) {
 				foreach (UserFileSystem newfs in newimage.userfilesystemlist) {
@@ -265,11 +325,12 @@ namespace persistentbackend
 					
 					if (newfile.filemetadata.versionNumber >= oldfile.filemetadata.versionNumber) { //lets roll
 						if (newfile.filemetadata.markedForDeletion == true) { //remove this file now
+							logger.Debug ("File marked for deletion, removing : " + filename);
 							oldfs.removeFromMap (filename); //this will decrement the size
 						} else {
-							long sizediff = newfile.filemetadata.filesize - oldfile.filemetadata.filesize;
+							//long sizediff = newfile.filemetadata.filesize - oldfile.filemetadata.filesize;
 							oldfs.filemap [filename] = newfile;
-							oldfs.incrementTotalFileSystemSize (sizediff);
+							//oldfs.incrementTotalFileSystemSize (sizediff);
 						}
 					}
 				}
