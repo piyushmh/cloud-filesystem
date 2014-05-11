@@ -123,7 +123,10 @@ namespace cloudfileserver
 					existingFile = this.filemap [filename];
 				}
 			}
-			return existingFile.getFileCloneSynchronized();
+			if (existingFile == null)
+				return null;
+			else
+				return existingFile.getFileCloneSynchronized();
 		}
 		
 		/* 	Synchronized method to add file to the file system.

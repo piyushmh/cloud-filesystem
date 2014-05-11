@@ -83,7 +83,7 @@ namespace cloudfileserver
 			);
 
 			UserFile file = null;
-			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
+			UserFileSystem fs = getUserFSFromMapSynchronized (fileowner);
 
 			//Now there no need for taking any more locks of this class. Used
 			// synchronized methods of the file system class
