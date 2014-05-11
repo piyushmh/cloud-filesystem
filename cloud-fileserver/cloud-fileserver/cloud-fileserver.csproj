@@ -93,6 +93,7 @@
     <Compile Include="Fileserver.Objects\FileMetaData.cs" />
     <Compile Include="Fileserver.Objects\UserFileSystemMetaData.cs" />
     <Compile Include="Fileserver.Exceptions\SharedUserNotLoadedInMemoryException.cs" />
+    <Compile Include="Fileserver.Exceptions\VersionNumberConflictException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fileserver.ServiceImpl\" />

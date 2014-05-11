@@ -137,7 +137,9 @@ namespace cloudfileserver
 				if (existingFile.filemetadata.markedForDeletion == false) {
 					if (file.filemetadata.versionNumber <= existingFile.filemetadata.versionNumber) {
 						Logger.Debug ("Existing higher number file found, skipping updation");
-						add = false;			
+						add = false;
+						throw VersionNumberConflictException ("Version number of passed file and the existing files are : " + 
+						                                      file.filemetadata.versionNumber + " " + existingFile.filemetadata.versionNumber);
 					} else {
 						Logger.Debug ("Existing lower version number file exists");
 					}

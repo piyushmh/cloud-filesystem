@@ -223,7 +223,7 @@ namespace cloudfileserver
 			Logger.Debug("Adding file : " + file.filemetadata.filepath + " for client : " + clientid);
 			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
 			if (fs != null) {
-				return fs.addFileSynchronized(file);
+				return fs.addFileSynchronized(file); //this can possible throw a version conflict exception
 
 			} else {
 				throw new UserNotLoadedInMemoryException("Add file failed for user :" 
@@ -271,8 +271,6 @@ namespace cloudfileserver
 			return delete;
 		
 		}
-
-
 
 
 		private UserFileSystem getUserFSFromMapSynchronized (string clientid)
