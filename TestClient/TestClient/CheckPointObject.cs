@@ -10,8 +10,12 @@ namespace TestClient
 
 		public DateTime lastcheckpoint { get; set; }
 
-		public CheckPointObject (){
-			this.userfilesystemlist = new List<UserFileSystem>();
+		public CheckPointObject ()
+		{
+			this.userfilesystemlist = new List<UserFileSystem> ();
+			this.lastcheckpoint = new DateTime ();
 		}
+		
+		
 	}
 }

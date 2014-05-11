@@ -160,6 +160,19 @@ namespace persistentbackend
 			return add;
 		}
 
+		/* Remove file from file map and update the size value of the file system accordingly */
+		public bool removeFromMap (string filename)
+		{
+			Logger.Debug ("Removing file from file map :" + filename);
+			
+			if (this.filemap.ContainsKey (filename)) {
+				this.metadata.totalFileSystemSizeBytes -= this.filemap [filename].filemetadata.filesize; //decrement the size
+				this.filemap.Remove (filename);
+				return true;
+			} else {
+				return false;
+			}
+		}
 	
 		//mark for deletion, reset the content, update the user file system size
 		public bool deleteFileSynchronized (string filename)
@@ -184,16 +197,16 @@ namespace persistentbackend
 			return file.getFileMetaDataCloneSynchronized();
 		}
 		
-		private void incrementTotalFileSystemSize (long inc)
+		public void incrementTotalFileSystemSize (long inc)
 		{
 			Logger.Debug ("Incrementing the total file system size by : " + inc);
 			lock (this.privateLock) {
-				this.totalFileSystemSizeBytes += inc;
+				this.metadata.totalFileSystemSizeBytes += inc;
 			
-				Logger.Debug ("Updated total file system size is : " + this.totalFileSystemSizeBytes);
+				Logger.Debug ("Updated total file system size is : " + this.metadata.totalFileSystemSizeBytes);
 				
-				if (this.totalFileSystemSizeBytes < 0) {
-					Logger.Warn ("The total file system size became negative : " + this.totalFileSystemSizeBytes + " FIX ME FIX ME");
+				if (this.metadata.totalFileSystemSizeBytes < 0) {
+					Logger.Warn ("The total file system size became negative : " + this.metadata.totalFileSystemSizeBytes + " FIX ME FIX ME");
 				}
 			}
 			

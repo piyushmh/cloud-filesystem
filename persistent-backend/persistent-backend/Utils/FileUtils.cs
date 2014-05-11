@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+
 
 //Author - Piyush
 namespace persistentbackend
@@ -25,6 +27,15 @@ namespace persistentbackend
 		}
 		
 		
+		public static string getMemoryPathFromDiskPath (string diskpath)
+		{
+			return diskpath.Replace ("/", "_");
+		}
+		
+		public static string getDiskPathFromMemoryPath (string memorypath)
+		{
+			return memorypath.Replace ("_", "/");
+		}
 		
 	}
 }

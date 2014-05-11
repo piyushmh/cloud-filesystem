@@ -14,9 +14,6 @@ namespace TestClient
 	{
 		private object privateLock;//this object is used to synchronize access over this object
 
-		private static readonly log4net.ILog Logger = 
-			log4net.LogManager.GetLogger(typeof(UserFileSystem));
-		
 		public UserMetaData metadata  {get; set;}
 		
 		public Dictionary<string, UserFile> filemap {get; set;}
@@ -39,5 +36,6 @@ namespace TestClient
 			this.metadata = metadata;
 
 		}
-}
+	}	
 
+}
