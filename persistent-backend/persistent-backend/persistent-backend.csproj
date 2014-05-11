@@ -84,6 +84,9 @@
     <Compile Include="PersistentStore.Objects\UserMetaData.cs" />
     <Compile Include="PersistentStore.Objects\CheckPointObject.cs" />
     <Compile Include="PersistentStore.Objects\SharedFile.cs" />
+    <Compile Include="PersistentStore.Objects\FileMetaData.cs" />
+    <Compile Include="PersistentStore.Objects\UserFileSystemMetaData.cs" />
+    <Compile Include="PersistentStorage.Exception\VersionNumberConflictException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PersistentStorage.ServiceImpl\" />

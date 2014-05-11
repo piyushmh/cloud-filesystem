@@ -17,6 +17,8 @@ namespace cloudfileserver
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(UserFileSystem));
 
+		public long totalFileSystemSizeBytes {get; set;} //in bytes
+		
 		public UserMetaData metadata  {get; set;}
 		
 		public Dictionary<string, UserFile> filemap {get; set;}
@@ -24,17 +26,21 @@ namespace cloudfileserver
 		//this represents the list of shared files which have been shared with this user
 		public List<SharedFile> sharedFiles { get; set; }
 
-		public UserFileSystem (){
-			this.filemap = new Dictionary<string, UserFile>();
-			this.privateLock = new object();
-			this.sharedFiles = new List<SharedFile>();
+		public UserFileSystem ()
+		{
+			this.filemap = new Dictionary<string, UserFile> ();
+			this.privateLock = new object ();
+			this.sharedFiles = new List<SharedFile> ();
+			this.totalFileSystemSizeBytes = 0;
 		}
 
-		public UserFileSystem (UserMetaData metadata){	
-			this.filemap = new Dictionary<string, UserFile>();
-			this.sharedFiles = new List<SharedFile>();
-			this.privateLock = new object();
+		public UserFileSystem (UserMetaData metadata)
+		{	
+			this.filemap = new Dictionary<string, UserFile> ();
+			this.sharedFiles = new List<SharedFile> ();
+			this.privateLock = new object ();
 			this.metadata = metadata;
+			this.totalFileSystemSizeBytes = 0;
 
 		}
 			
@@ -117,7 +123,7 @@ namespace cloudfileserver
 					existingFile = this.filemap [filename];
 				}
 			}
-			return existingFile.getFileCloneSynchronized;
+			return existingFile.getFileCloneSynchronized();
 		}
 		
 		/* 	Synchronized method to add file to the file system.
@@ -132,14 +138,17 @@ namespace cloudfileserver
 			UserFile existingFile = getFileSynchronized (file.filemetadata.filepath);
 
 			bool add = true;
-
+			long existingSize = 0;
 			if (existingFile != null) {
+				existingSize = existingFile.getFileSizeSynchronized (); // this is the size of the existing file
+				
 				if (existingFile.filemetadata.markedForDeletion == false) {
 					if (file.filemetadata.versionNumber <= existingFile.filemetadata.versionNumber) {
 						Logger.Debug ("Existing higher number file found, skipping updation");
 						add = false;
-						throw VersionNumberConflictException ("Version number of passed file and the existing files are : " + 
-						                                      file.filemetadata.versionNumber + " " + existingFile.filemetadata.versionNumber);
+						throw new VersionNumberConflictException ("Version number of passed file and the existing files are : " + 
+							file.filemetadata.versionNumber + " " + existingFile.filemetadata.versionNumber
+						);
 					} else {
 						Logger.Debug ("Existing lower version number file exists");
 					}
@@ -150,11 +159,50 @@ namespace cloudfileserver
 			
 			if (add) {
 				addFileToMapSynchronized (file);
+				incrementTotalFileSystemSize (file.filemetadata.filesize - existingSize);
 			}
 			return add;
 		}
 
 	
+		//mark for deletion, reset the content, update the user file system size
+		public bool deleteFileSynchronized (string filename)
+		{
+			UserFile file = getFileSynchronized (filename);
+			
+			if (file == null) {
+				throw new FileNotFoundException ("File not found :" + filename);
+			}
+			
+			bool delete = file.markForDeletionSynchronized ();
+			
+			//reset the content. this will also increment the version number. Don't do it later
+			long sizeDiff = file.SetFileContentSynchronized (new byte[0], file.getFileVersionNumberSynchronized () + 1); 
+			incrementTotalFileSystemSize (sizeDiff);
+			return delete;
+			
+		}
+		
+		public FileMetaData getFileMetaDataCloneSynchronized(string filename){	
+			UserFile file = getFileSynchronized (filename);
+			return file.getFileMetaDataCloneSynchronized();
+		}
+		
+		private void incrementTotalFileSystemSize (long inc)
+		{
+			Logger.Debug ("Incrementing the total file system size by : " + inc);
+			lock (this.privateLock) {
+				this.totalFileSystemSizeBytes += inc;
+			
+				Logger.Debug ("Updated total file system size is : " + this.totalFileSystemSizeBytes);
+				
+				if (this.totalFileSystemSizeBytes < 0) {
+					Logger.Warn ("The total file system size became negative : " + this.totalFileSystemSizeBytes + " FIX ME FIX ME");
+				}
+			}
+			
+		}
+		
 		/* Internal synchronized method to add file to the class map*/
 		private void addFileToMapSynchronized (UserFile file)
 		{

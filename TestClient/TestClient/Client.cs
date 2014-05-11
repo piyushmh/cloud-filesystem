@@ -28,10 +28,11 @@ namespace TestClient{
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
 			//arg.file = file;
 			UserFile file1 = new UserFile ("y_z.txt", "piyush");
-			file1.filecontent = Encoding.UTF8.GetBytes ("this is the file content for y_z.txt");
+			file1.filecontent = Encoding.UTF8.GetBytes ("this");
 			UserFile file = new UserFile ("y_x.txt", "piyush");
-			file.filemetadata.sharedwithclients.Add ("garima");
-			file.filecontent = Encoding.UTF8.GetBytes ("this is the new file content including poop");
+			//file.filemetadata.sharedwithclients.Add ("garima");
+			file.filecontent = Encoding.UTF8.GetBytes ("this");
+			file.filemetadata.filesize = file.filecontent.Length;
 			file.filemetadata.versionNumber = 1;
 			//Console.WriteLine ("Poop " + Encoding.UTF8.GetString (file.filecontent));
 			client.Post<Object> ("/adduser/piyush/password", new AddUser ());

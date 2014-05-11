@@ -39,7 +39,7 @@ namespace persistentbackend
 			checkObject.lastcheckpoint = lastcheckpointtime;
 			logger.Debug ("Poop : " + checkObject.lastcheckpoint);
 			if (lastcheckpointfilecontent.Count < 2)
-				throw DiskuserMetaDataCorrupt ("Something wrong with the last check point file path, check!!");
+				throw new DiskuserMetaDataCorrupt ("Something wrong with the last check point file path, check!!");
 			
 			string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; 
 			logger.Debug("Last check point path read as :" + latestcheckpointfolderpath);

@@ -60,6 +60,21 @@ namespace cloudfileserver
 			return present;
 		}
 
+		
+		public long getFileSizeSynchronized ()
+		{
+			lock (this.privateLock) {
+				return this.filemetadata.filesize;
+			}
+		}
+		
+		public long getFileVersionNumberSynchronized ()
+		{
+			lock (this.privateLock) {
+				return this.filemetadata.versionNumber;
+			}
+		}
+		
 		//Mark the file for deletion and increment its version number
 		public bool markForDeletionSynchronized ()
 		{
@@ -68,7 +83,7 @@ namespace cloudfileserver
 				logger.Debug ("Marking file for deletion : " + this.filemetadata.filepath);
 				if (this.filemetadata.markedForDeletion == false) {
 					this.filemetadata.markedForDeletion = true;
-					this.filemetadata.versionNumber += 1;
+					//this.filemetadata.versionNumber += 1;
 					delete = true;
 				}
 			}
@@ -135,7 +150,7 @@ namespace cloudfileserver
 			return b;
 		}
 
-		public bool SetFileContentSynchronized (UserFile newfile)
+		public long SetFileContentSynchronized (UserFile newfile)
 		{
 			return SetFileContentSynchronized( newfile.filecontent, newfile.filemetadata.versionNumber);
 		}
@@ -143,24 +158,30 @@ namespace cloudfileserver
 		/* Change the file contents only if new version number is greater than the current 
 		 * version number. Also update the size and the version number accordingly
 		 */
-		public bool SetFileContentSynchronized( byte[] newcontent, long newversionNumber){
+		public long SetFileContentSynchronized( byte[] newcontent, long newversionNumber){
 
 			lock (privateLock) {
 				return SetFileContent( newcontent, newversionNumber);
 			}
 		}
 
-		public bool SetFileContent( byte[] newcontent, long newversionNumber){
-			logger.Debug("Set file content called on file with path :" + this.filemetadata.filepath);
+		//When this called its assumed that the lock over the file is already taken
+		//this method returns the new content size minus the old content size
+		public long SetFileContent( byte[] newcontent, long newversionNumber){
+			logger.Debug("Set file content called on file with path and new content of size :" + this.filemetadata.filepath + " " + newcontent.Length);
+			
+			long oldSize = this.filemetadata.filesize;
+			long newSize = newcontent.Length;
+			
 			if( this.filemetadata.versionNumber < newversionNumber){ //only if the file is of a newer version
 				this.filecontent = new byte[newcontent.Length];
 				System.Array.Copy(newcontent, this.filecontent, newcontent.Length);
 				this.filemetadata.versionNumber = newversionNumber;
 				this.filemetadata.filesize = newcontent.Length;
-				return true;
+				return (newSize - oldSize);
 			}else{
 				logger.Debug("File over write attempt with smaller version number, ignoring");
-				return false;
+				return 0;
 			}	
 		}
 

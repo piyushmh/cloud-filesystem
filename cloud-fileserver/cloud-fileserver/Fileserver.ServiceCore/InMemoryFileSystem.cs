@@ -245,15 +245,9 @@ namespace cloudfileserver
 				throw new UserNotLoadedInMemoryException ("User not loaded in memory :" + clientid);
 			}
 			
-			UserFile file = fs.getFileSynchronized (filename);
+			bool delete = fs.deleteFileSynchronized (filename);
 			
-			if (file == null) {
-				throw new FileNotFoundException ("File not found for client id and file name : " + clientid + " " + filename);
-			}
-			
-			bool delete = file.markForDeletionSynchronized ();
-			
-			List<string> sharedClients = file.getFileMetaDataCloneSynchronized ().sharedwithclients;
+			List<string> sharedClients = fs.getFileMetaDataCloneSynchronized(filename).sharedwithclients;
 			foreach (string sharedclient in sharedClients) {
 				
 				UserFileSystem fsShared = getUserFSFromMapSynchronized (sharedclient);
@@ -267,6 +261,7 @@ namespace cloudfileserver
 				}
 				
 			}
+			
 			
 			return delete;
 		

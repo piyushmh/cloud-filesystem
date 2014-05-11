@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Text;
 
 namespace persistentbackend
 {
@@ -10,36 +13,127 @@ namespace persistentbackend
 	[Serializable]
 	public class UserFile	{
 
-		public string filepath { get; set;}
-
-		public string owner { get; set;}
-
-		//access to this must be through synchronized methods if needed, they are defined below
+		//file content
 		public byte[] filecontent { get; set;}
 
-		//DAFUQ, ideally access to this should be synchronized as well, maybe later
-		public long filesize { get; set;}
-
-		public List<string> sharedwithclients { get; set;}
-
-		public long versionNumber {get;set;}
-
-		public bool markedForDeletion { get; set; }
+		//metadata
+		public FileMetaData filemetadata { get; set; }
 		
 		private object privateLock = new object();
-		
+
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(UserFile));
 
+		
+		public UserFile getFileCloneSynchronized ()
+		{
+			object obj;
+			lock (this.privateLock) {
+				MemoryStream ms = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+				bf.Serialize (ms, this);
+				ms.Position = 0;
+				obj = bf.Deserialize (ms);
+				ms.Close ();
+			}
+			return obj as UserFile;
+		}
+		
+		public FileMetaData getFileMetaDataCloneSynchronized(){
+			lock( this.privateLock){
+				return this.filemetadata.cloneMetaDataObject();
+			}
+		}
+		
+		private bool ifSharedUserPresentSynchronized (string username)
+		{
+			logger.Debug ("Checking if shared user :" + username + " is present in the shared file list");
+			bool present = false;
+			lock (this.privateLock) {
+				foreach (string user in this.filemetadata.sharedwithclients) {
+					if (username.Equals (user)) {
+						present = true;
+						break;
+					}
+				}
+			}
+			return present;
+		}
 
+		
+		public long getFileSizeSynchronized ()
+		{
+			lock (this.privateLock) {
+				return this.filemetadata.filesize;
+			}
+		}
+		
+		public long getFileVersionNumberSynchronized ()
+		{
+			lock (this.privateLock) {
+				return this.filemetadata.versionNumber;
+			}
+		}
+		
+		//Mark the file for deletion and increment its version number
+		public bool markForDeletionSynchronized ()
+		{
+			bool delete = false;
+			lock (this.privateLock) {
+				logger.Debug ("Marking file for deletion : " + this.filemetadata.filepath);
+				if (this.filemetadata.markedForDeletion == false) {
+					this.filemetadata.markedForDeletion = true;
+					//this.filemetadata.versionNumber += 1;
+					delete = true;
+				}
+			}
+			return delete;
+		}
+		
+		/* Method to check if the user has access to the file by checking in the shared user list*/ 
+		public bool checkUserAccessSynchronized (string user)
+		{
+			logger.Debug ("Checking if user : " + user + " has access to the file :" + this.filemetadata.filepath);
+			
+			bool access = false;
+			lock (this.privateLock) {
+				foreach (string u in this.filemetadata.sharedwithclients) {
+					if (u.Equals (user)) {
+						access = true;
+						break;
+					}
+				}
+			}
+			return access;
+		}
+		
+		public void addSharedSynchronized (string username)
+		{
+			logger.Debug ("Adding user : " + username + " to user file :" + this.filemetadata.filepath);
+			bool present = ifSharedUserPresentSynchronized (username);
+			if (present) {
+				logger.Debug ("Shared user :" + username + " is already added to the shared list, skipping");
+			}
+			lock (this.privateLock) {
+				this.filemetadata.sharedwithclients.Add (username);
+			}
+		}
+		
+		public void initializePrivateLock ()
+		{
+			
+			logger.Debug ("Setting private lock to a new object for file : " + this.filemetadata.filepath);
+			if (this.privateLock == null) {
+				this.privateLock = new object ();
+			} else {
+				logger.Debug ("Private lock is already initiazed for filr  : " + this.filemetadata.filepath + " skipping");
+			}
+		}
+		
 		public UserFile (string filepath, string owner)
 		{	
-			this.filepath = filepath;
-			this.owner = owner;
-			this.versionNumber = -1;
-			this.filesize = 0;
+			this.filemetadata = new FileMetaData (filepath, owner);
 			this.filecontent = new byte[0];
-			this.sharedwithclients = new List<string>();
 		}
 
 		public byte[] ReadFileContentSynchronized ()
@@ -51,54 +145,65 @@ namespace persistentbackend
 
 		public byte[] ReadFileContent ()
 		{
-			return this.filecontent;
-
+			byte[] b = new byte[this.filecontent.Length];
+			Buffer.BlockCopy (this.filecontent, 0, b, 0, this.filecontent.Length);
+			return b;
 		}
 
-		public bool SetFileContentSynchronized (UserFile newfile)
+		public long SetFileContentSynchronized (UserFile newfile)
 		{
-			return SetFileContentSynchronized( newfile.filecontent, newfile.versionNumber);
+			return SetFileContentSynchronized( newfile.filecontent, newfile.filemetadata.versionNumber);
 		}
 
 		/* Change the file contents only if new version number is greater than the current 
 		 * version number. Also update the size and the version number accordingly
 		 */
-		public bool SetFileContentSynchronized( byte[] newcontent, long newversionNumber){
+		public long SetFileContentSynchronized( byte[] newcontent, long newversionNumber){
 
 			lock (privateLock) {
 				return SetFileContent( newcontent, newversionNumber);
 			}
 		}
 
-		public bool SetFileContent( byte[] newcontent, long newversionNumber){
-			logger.Debug("Set file content called on file with path :" + this.filepath);
-			if( this.versionNumber < newversionNumber){ //only if the file is of a newer version
+		//When this called its assumed that the lock over the file is already taken
+		//this method returns the new content size minus the old content size
+		public long SetFileContent( byte[] newcontent, long newversionNumber){
+			logger.Debug("Set file content called on file with path and new content of size :" + this.filemetadata.filepath + " " + newcontent.Length);
+			
+			long oldSize = this.filemetadata.filesize;
+			long newSize = newcontent.Length;
+			
+			if( this.filemetadata.versionNumber < newversionNumber){ //only if the file is of a newer version
 				this.filecontent = new byte[newcontent.Length];
 				System.Array.Copy(newcontent, this.filecontent, newcontent.Length);
-				this.versionNumber = newversionNumber;
-				this.filesize = newcontent.Length;
-				return true;
+				this.filemetadata.versionNumber = newversionNumber;
+				this.filemetadata.filesize = newcontent.Length;
+				return (newSize - oldSize);
 			}else{
 				logger.Debug("File over write attempt with smaller version number, ignoring");
-				return false;
+				return 0;
 			}	
 		}
 
 		//This will be used in checkpointing
 		public string GenerateMetaDataStringFromFile ()
 		{
-			string r = this.owner + "\n" + this.filesize.ToString() + "\n" + this.versionNumber.ToString() + "\n";
-			string joined = string.Join(",", this.sharedwithclients.ToArray());
+			string r = this.filemetadata.owner + "\n" + this.filemetadata.filesize.ToString() + "\n" + this.filemetadata.versionNumber.ToString() + "\n";
+			string joined = string.Join(",", this.filemetadata.sharedwithclients.ToArray());
 			return  r + joined;
 		}
 
 		public override string ToString ()
 		{
-			return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
-				"sharedwithclients={4}, versionNumber={5}]", filepath, owner, filecontent, 
-			                      filesize, sharedwithclients, versionNumber);
+			try {
+				return string.Format ("[UserFile: filepath={0}, owner={1}, filecontent={2}, filesize={3}, " +
+					"sharedwithclients={4}, versionNumber={5}]", filemetadata.filepath, filemetadata.owner, Encoding.UTF8.GetString(filecontent), 
+			                      filemetadata.filesize, filemetadata.sharedwithclients, filemetadata.versionNumber);
+			} catch (Exception e) {
+				logger.Debug(e);
+				throw e;
+			}
 		}
-
 
 	}
 }
