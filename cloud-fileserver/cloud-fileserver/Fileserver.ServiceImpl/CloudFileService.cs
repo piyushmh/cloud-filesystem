@@ -164,8 +164,8 @@ namespace cloudfileserver
 		public void Post (ShareFileWithUser request)
 		{
 			
-			logger.Info ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
-				+ request.clientId + " for file name : " + request.filename
+			logger.Info ("****Request received for sharing file owned by user : " + request.clientId + " by user : " 
+				+ request.sharedWithUser + " for file name : " + request.filename
 			); 	
 			try {
 				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
