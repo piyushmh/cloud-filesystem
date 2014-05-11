@@ -308,6 +308,16 @@ namespace cloudfileserver
 			}
 		}
 		
+		
+		public bool removeSharedUserFromFileSynchronized (string filename, string sharedUser)
+		{
+			Logger.Debug ("Removing shared user from file : " + filename + " " + sharedUser);
+			
+			UserFile f = getFileSynchronized (filename);
+			return f.deleteSharedUserSynchronized (sharedUser);
+			
+		}
+		
 		/* Synhronized method to checki if the file is already 
 		 * shared with the user or not
 		 */

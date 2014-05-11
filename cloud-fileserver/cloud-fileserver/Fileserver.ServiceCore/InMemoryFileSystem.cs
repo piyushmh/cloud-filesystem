@@ -318,7 +318,8 @@ namespace cloudfileserver
 			Logger.Debug ("Un Sharing file " + filename + " owned by user " + clientId + " with user " + sharedWithUser);
 			UserFileSystem fs = getUserFSFromMapSynchronized (clientId);
 			bool filepresent = fs.isFilePresentSynchronized (filename);
-			
+			fs.removeSharedUserFromFileSynchronized(filename, sharedWithUser);
+			                                        
 			if (! filepresent) {
 				throw new FileNotFoundException ("File not present in memory for client : " + filename + " for client : " + clientId);
 			}

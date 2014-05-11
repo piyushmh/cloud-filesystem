@@ -24,6 +24,28 @@ namespace cloudfileserver
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(UserFile));
 
+		public bool deleteSharedUserSynchronized (string user)
+		{
+			logger.Debug ("Deleting shared user : " + user);
+			bool deleted = false;
+			lock (this.privateLock) {
+				List<string> newSharedList = new List<string> ();
+				foreach (string exisitinguser in this.filemetadata.sharedwithclients) {
+					if (! exisitinguser.Equals (user)) {
+						newSharedList.Add (exisitinguser);
+					} else {
+						deleted = true;
+					}
+				}
+				
+				logger.Debug ("The size of shared list for file before and after deleting is :" + 
+				              this.filemetadata.sharedwithclients.Capacity + " " + newSharedList.Capacity);
+				this.filemetadata.sharedwithclients = newSharedList;
+			}
+			
+			return deleted;
+		}
+		
 		
 		public UserFile getFileCloneSynchronized ()
 		{
