@@ -116,25 +116,29 @@ namespace cloudfileserver
 		*/
 		public bool addFileSynchronized (UserFile file)
 		{
-			Logger.Debug("Adding file with file name : " + file.filemetadata.filepath);
+			Logger.Debug ("Adding file with file name : " + file.filemetadata.filepath);
 
-			UserFile existingFile = getFileSynchronized(file.filemetadata.filepath);
+			UserFile existingFile = getFileSynchronized (file.filemetadata.filepath);
 
-			bool retval = true;
+			bool add = true;
 
 			if (existingFile != null) {
-				if( file.filemetadata.versionNumber > existingFile.filemetadata.versionNumber){
-					addFileToMapSynchronized(file);
-				}else{
-					Logger.Debug("Existing file with higher version number found for file : " + file.filemetadata.filepath +
-					             " , skipping updation");
-					retval = false;
+				if (existingFile.filemetadata.markedForDeletion == false) {
+					if (file.filemetadata.versionNumber <= existingFile.filemetadata.versionNumber) {
+						Logger.Debug ("Existing higher number file found, skipping updation");
+						add = false;			
+					} else {
+						Logger.Debug ("Existing lower version number file exists");
+					}
+				} else {
+					Logger.Debug ("Exiting file exists, but marked for deletion");
 				}
-			} else {
-				addFileToMapSynchronized(file);			
 			}
-
-			return retval;
+			
+			if (add) {
+				addFileToMapSynchronized (file);
+			}
+			return add;
 		}
 
 	
