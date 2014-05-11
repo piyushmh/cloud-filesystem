@@ -60,7 +60,7 @@ namespace cloudfileserver
 			return present;
 		}
 
-		
+		//Mark the file for deletion and increment its version number
 		public bool markForDeletionSynchronized ()
 		{
 			bool delete = false;
@@ -68,6 +68,7 @@ namespace cloudfileserver
 				logger.Debug ("Marking file for deletion : " + this.filemetadata.filepath);
 				if (this.filemetadata.markedForDeletion == false) {
 					this.filemetadata.markedForDeletion = true;
+					this.filemetadata.versionNumber += 1;
 					delete = true;
 				}
 			}
