@@ -1,18 +1,30 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.Exception/DiskuserMetaDataCorrupt.cs">
     <Files>
-      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="19" Column="3" />
-      <File FileName="persistent-backend/PersistentStore.Objects/UserFile.cs" Line="200" Column="118" />
-      <File FileName="persistent-backend/Utils/FileUtils.cs" Line="20" Column="31" />
-      <File FileName="persistent-backend/PersistentStore.Objects/CheckPointObject.cs" Line="1" Column="1" />
+      <File FileName="persistent-backend/PersistentStore.Objects/CheckPointObject.cs" Line="18" Column="1" />
       <File FileName="persistent-backend/PersistentStore.Objects/SharedFile.cs" Line="3" Column="28" />
-      <File FileName="persistent-backend/PersistentStore.Objects/FileMetaData.cs" Line="4" Column="28" />
+      <File FileName="persistent-backend/PersistentStore.Objects/UserFile.cs" Line="133" Column="3" />
       <File FileName="persistent-backend/PersistentStore.Objects/UserFileSystem.cs" Line="149" Column="59" />
       <File FileName="persistent-backend/PersistentStore.Objects/UserFileSystemMetaData.cs" Line="16" Column="12" />
       <File FileName="persistent-backend/PersistentStore.Objects/UserMetaData.cs" Line="5" Column="28" />
-      <File FileName="persistent-backend/PersistentStorage.Exception/VersionNumberConflictException.cs" Line="2" Column="28" />
+      <File FileName="persistent-backend/PersistentStorage.Exception/DiskuserMetaDataCorrupt.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="persistent-backend" expanded="True">
+            <Node name="PersistentStorage.Core" expanded="True" />
+            <Node name="PersistentStorage.Exception" expanded="True">
+              <Node name="DiskuserMetaDataCorrupt.cs" selected="True" />
+            </Node>
+            <Node name="PersistentStorage.ServiceImpl" expanded="True" />
+            <Node name="PersistentStore.Objects" expanded="True" />
+            <Node name="Utils" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

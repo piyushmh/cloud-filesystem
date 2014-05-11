@@ -17,7 +17,6 @@ namespace persistentbackend
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(UserFileSystem));
 
-		public long totalFileSystemSizeBytes {get; set;} //in bytes
 		
 		public UserMetaData metadata  {get; set;}
 		
@@ -31,7 +30,6 @@ namespace persistentbackend
 			this.filemap = new Dictionary<string, UserFile> ();
 			this.privateLock = new object ();
 			this.sharedFiles = new List<SharedFile> ();
-			this.totalFileSystemSizeBytes = 0;
 		}
 
 		public UserFileSystem (UserMetaData metadata)
@@ -40,8 +38,6 @@ namespace persistentbackend
 			this.sharedFiles = new List<SharedFile> ();
 			this.privateLock = new object ();
 			this.metadata = metadata;
-			this.totalFileSystemSizeBytes = 0;
-
 		}
 			
 	

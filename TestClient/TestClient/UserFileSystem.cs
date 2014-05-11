@@ -14,6 +14,9 @@ namespace TestClient
 	{
 		private object privateLock;//this object is used to synchronize access over this object
 
+		private static readonly log4net.ILog Logger = 
+			log4net.LogManager.GetLogger(typeof(UserFileSystem));
+		
 		public UserMetaData metadata  {get; set;}
 		
 		public Dictionary<string, UserFile> filemap {get; set;}
@@ -21,19 +24,20 @@ namespace TestClient
 		//this represents the list of shared files which have been shared with this user
 		public List<SharedFile> sharedFiles { get; set; }
 
-		public UserFileSystem (){
-			this.filemap = new Dictionary<string, UserFile>();
-			this.privateLock = new object();
-			this.sharedFiles = new List<SharedFile>();
+		public UserFileSystem ()
+		{
+			this.filemap = new Dictionary<string, UserFile> ();
+			this.privateLock = new object ();
+			this.sharedFiles = new List<SharedFile> ();
 		}
 
-		public UserFileSystem (UserMetaData metadata){	
-			this.filemap = new Dictionary<string, UserFile>();
-			this.sharedFiles = new List<SharedFile>();
-			this.privateLock = new object();
+		public UserFileSystem (UserMetaData metadata)
+		{	
+			this.filemap = new Dictionary<string, UserFile> ();
+			this.sharedFiles = new List<SharedFile> ();
+			this.privateLock = new object ();
 			this.metadata = metadata;
 
 		}
-	}
 }
 

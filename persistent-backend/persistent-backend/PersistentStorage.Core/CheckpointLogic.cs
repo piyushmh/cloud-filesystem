@@ -140,6 +140,62 @@ namespace persistentbackend
 			return file;
 		}
 	
+		
+		
+		/*Check point entry */
+		public void DoCheckPointAllUsers (CheckPointObject filesystem)
+		{
+			logger.Debug ("Do Check point method called for filesystem");
+			
+			CheckPointObject oldcheckpointobject = RestoreFileSystem (true); //load the old file in memory to merege
+			filesystem = mergeCheckPointObjects (filesystem, oldcheckpointobject);
+			
+			try{
+				string path = GenerateCheckpointPath (filesystem.lastcheckpoint);
+				logger.Debug ("Creating checkpointing path :" + path);
+				Directory.CreateDirectory (path);
+				string lastcheckpointfilepath = this.pathprefix + this.lastcheckpointfilename;
+				foreach( UserFileSystem userfs in filesystem.userfilesystemlist){
+					DoCheckPointForUser( userfs.metadata.clientId, path, userfs);
+				}
+			
+				//Now update the last check point file so that we can restore this checkpoint
+				logger.Debug ("Writing to last checkpoint file at path : " + lastcheckpointfilepath);
+				System.IO.File.WriteAllText(lastcheckpointfilepath, 
+				          DateUtils.getStringfromDateTime(filesystem.lastcheckpoint) + "\n" + path);
+
+			}catch ( Exception e){
+					logger.Debug ("Exception :" + e);
+				throw e;
+			}
+
+		}
+		
+		
+		//Merge the check point objects
+		private CheckPointObject mergeCheckPointObjects (CheckPointObject newimage, CheckPointObject oldimage)
+		{
+			logger.Debug("Merge check point objects");
+			CheckPointObject retObject = new CheckPointObject (); //ret object
+			foreach (UserFileSystem oldfs in oldimage) {
+				foreach (UserFileSystem newfs in newimage) {
+					if (oldfs.metadata.clientId.Equals (newfs.metadata.clientId)) { //match based on user id
+						retObject.userfilesystemlist = mergeUserFileSystems (newfs, oldfs);				
+					}
+				}
+			}
+			return retObject;
+			
+		}
+		
+		//Merge the user file system
+		private UserFileSystem mergeUserFileSystems (UserFileSystem newfs, UserFileSystem oldfs)
+		{
+			logger.Debug ("Merging user file systems for user id : " + newfs.metadata.clientId);
+			
+			
+		}
+		
 		private string GetParentDirectoryPath( string fullpath){
 			return Path.GetDirectoryName(fullpath) + Path.DirectorySeparatorChar;
 		}

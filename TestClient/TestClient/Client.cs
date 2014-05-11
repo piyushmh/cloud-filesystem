@@ -28,15 +28,15 @@ namespace TestClient{
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
 			//arg.file = file;
 			
-			CheckPointObject obj = client.Get<CheckPointObject> ("/restoreCheckPoint");
-			Console.WriteLine (obj.lastcheckpoint);
-			Console.WriteLine (obj.ToJson());
+			//CheckPointObject obj = client.Get<CheckPointObject> ("/restoreCheckPoint");
+			//Console.WriteLine (obj.lastcheckpoint);
+			//Console.WriteLine (obj.ToJson());
 			
-			/*
-			UserFile file1 = new UserFile ("y_z.txt", "piyush");
-			file1.filecontent = Encoding.UTF8.GetBytes ("this");
+			
+			//UserFile file1 = new UserFile ("y_z.txt", "piyush");
+			//file1.filecontent = Encoding.UTF8.GetBytes ("this");
 			UserFile file = new UserFile ("y_x.txt", "piyush");
-			//file.filemetadata.sharedwithclients.Add ("garima");
+			///file.filemetadata.sharedwithclients.Add ("garima");
 			file.filecontent = Encoding.UTF8.GetBytes ("this");
 			file.filemetadata.filesize = file.filecontent.Length;
 			file.filemetadata.versionNumber = 1;
@@ -49,12 +49,14 @@ namespace TestClient{
 			//Console.WriteLine (md.userMetaData.clientId + " " + md.userMetaData.password);
 			
 			client.Post<Object> ("/shareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
+			UserFile f = client.Get<UserFile> ("/file/laxman/password/y_x.txt/piyush");
+			Console.Write (f);
 			//client.Post<Object> ("/shareFile/piyush/password/y_z.txt/laxman", new ShareFileWithUser ()); 
 			//client.Post<Object> ("/unShareFile/piyush/password/y_x.txt/laxman", new ShareFileWithUser ()); 
 			//UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
 			//Console.Write (f);
-			client.Post<Object> ("/deletefile/piyush/password/y_x.txt", new DeleteFile());
-			*/
+			//client.Post<Object> ("/deletefile/piyush/password/y_x.txt", new DeleteFile());
+			
 		}
 
 		public static byte[] getByteArrayFromString (string str)

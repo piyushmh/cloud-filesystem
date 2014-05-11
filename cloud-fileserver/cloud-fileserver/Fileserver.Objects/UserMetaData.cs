@@ -13,11 +13,14 @@ namespace cloudfileserver
 
 		public long versionNumber { get; set;}
 		
+		public long totalFileSystemSizeBytes {get; set;} //in bytes
+		
 		public UserMetaData (string clientId, string password, long versionnumber)
 		{
 			this.clientId = clientId;
 			this.password = password;
 			this.versionNumber = versionnumber;
+			this.totalFileSystemSizeBytes = 0;
 		}
 
 		public UserMetaData cloneMetaData(){

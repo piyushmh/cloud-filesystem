@@ -16,8 +16,6 @@ namespace cloudfileserver
 
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(UserFileSystem));
-
-		public long totalFileSystemSizeBytes {get; set;} //in bytes
 		
 		public UserMetaData metadata  {get; set;}
 		
@@ -31,7 +29,6 @@ namespace cloudfileserver
 			this.filemap = new Dictionary<string, UserFile> ();
 			this.privateLock = new object ();
 			this.sharedFiles = new List<SharedFile> ();
-			this.totalFileSystemSizeBytes = 0;
 		}
 
 		public UserFileSystem (UserMetaData metadata)
@@ -40,7 +37,6 @@ namespace cloudfileserver
 			this.sharedFiles = new List<SharedFile> ();
 			this.privateLock = new object ();
 			this.metadata = metadata;
-			this.totalFileSystemSizeBytes = 0;
 
 		}
 			
@@ -195,12 +191,12 @@ namespace cloudfileserver
 		{
 			Logger.Debug ("Incrementing the total file system size by : " + inc);
 			lock (this.privateLock) {
-				this.totalFileSystemSizeBytes += inc;
+				this.metadata.totalFileSystemSizeBytes += inc;
 			
-				Logger.Debug ("Updated total file system size is : " + this.totalFileSystemSizeBytes);
+				Logger.Debug ("Updated total file system size is : " + this.metadata.totalFileSystemSizeBytes);
 				
-				if (this.totalFileSystemSizeBytes < 0) {
-					Logger.Warn ("The total file system size became negative : " + this.totalFileSystemSizeBytes + " FIX ME FIX ME");
+				if (this.metadata.totalFileSystemSizeBytes < 0) {
+					Logger.Warn ("The total file system size became negative : " + this.metadata.totalFileSystemSizeBytes + " FIX ME FIX ME");
 				}
 			}
 			
