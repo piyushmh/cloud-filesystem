@@ -89,19 +89,25 @@ namespace cloudfileserver
 			// synchronized methods of the file system class
 
 			if (fs != null) {
-				/*if (this.clientToFileSystemMap [fileowner].filemap.ContainsKey (filename)) {
-					file = fs.filemap [filename];
-				} else {
+				
+				file = fs.getFileCloneSynchronized (filename); //this is the cloned copy of file, do whatever you want
 					
-				}*/
-				file = fs.getFileSynchronized (filename);
+				//this is the case when file is present in the map but marked for deletion
+				if (file.filemetadata.markedForDeletion == true) {
+					Logger.Debug ("File, present but marked for deletion");
+					throw new FileNotFoundException ("File with name :" + filename + 
+						" marked for deletion for owner : " + fileowner
+					);
+				}
+				
+				//this is the case when file is not present in the map
 				if (file == null) {
 					throw new FileNotFoundException ("File with name :" + filename + 
 						" not found for owner : " + fileowner
 					);
 				}
 				
-			} else {
+			} else { //file system is not present for the user
 				throw new UserNotLoadedInMemoryException ("Client not found in memory : " + clientId);
 			}
 

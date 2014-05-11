@@ -109,6 +109,17 @@ namespace cloudfileserver
 			return existingFile;
 		}
 
+		public UserFile getFileCloneSynchronized (string filename)
+		{
+			UserFile existingFile = null;
+			lock (this.privateLock) {
+				if (this.filemap.ContainsKey (filename)) {
+					existingFile = this.filemap [filename];
+				}
+			}
+			return existingFile.getFileCloneSynchronized;
+		}
+		
 		/* 	Synchronized method to add file to the file system.
 			If the file is not present then the file is added. If the file
 		 	is already present it is overwritten if the new file has a 

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 
 namespace cloudfileserver
 {
@@ -21,7 +24,21 @@ namespace cloudfileserver
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(UserFile));
 
-
+		
+		public UserFile getFileCloneSynchronized ()
+		{
+			object obj;
+			lock (this.privateLock) {
+				MemoryStream ms = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+				bf.Serialize (ms, this);
+				ms.Position = 0;
+				obj = bf.Deserialize (ms);
+				ms.Close ();
+			}
+			return obj as UserFile;
+		}
+		
 		public FileMetaData getFileMetaDataCloneSynchronized(){
 			lock( this.privateLock){
 				return this.filemetadata.cloneMetaDataObject();

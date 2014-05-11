@@ -79,7 +79,8 @@ namespace cloudfileserver
 		public object Get (GetFile request)
 		{
 			logger.Info ("****Request received for getting file : " + request.filename + " client id : " + 
-			              request.clientId + " and fileowner : " + request.fileowner);
+				request.clientId + " and fileowner : " + request.fileowner
+			);
 			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
@@ -88,7 +89,9 @@ namespace cloudfileserver
 			try {
 				UserFile file = 
 					filesystem.FetchFile (request.clientId, request.filename, request.fileowner);
+				logger.Debug ("Returning file with size : " + file.filemetadata.filesize);
 				return file;
+				
 			} catch (Exception e) {
 				logger.Debug("Exception occured while doing getfile for client : " + request.clientId
 				             +" for filename :" + request.filename , e);
