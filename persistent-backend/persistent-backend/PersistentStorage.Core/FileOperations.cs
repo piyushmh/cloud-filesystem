@@ -75,7 +75,7 @@ namespace persistentbackend
 				string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; 
 				logger.Debug ("Last check point path read as :" + latestcheckpointfolderpath);
 				latestcheckpointfolderpath = latestcheckpointfolderpath.Trim (); 
-				string userpath = latestcheckpointfolderpath + Path.DirectorySeparatorChar + username;
+				string userpath = latestcheckpointfolderpath + username;
 				
 				logger.Debug ("User path constructed is :" + userpath);
 				UserFile file = new CheckpointLogic ().RestoreUserFile (

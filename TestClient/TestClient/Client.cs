@@ -37,7 +37,9 @@ namespace TestClient{
 			file.filecontent = getByteArrayFromString ("Bitches this is the new file content");
 			file.filemetadata.versionNumber = 3;
 			file.filemetadata.filesize = file.filecontent.Length;
-			client.Post<Object> ("/adduser/karthik/password", new AddUser());
+			UserFile f = client.Get<UserFile> ("/file/piyush/password/x_z.txt/piyush");
+			Console.WriteLine (f);
+
 			//arg.file = file;
 			//UserFile file = client.Get<UserFile> ("/fetchfile/piyush/x_z.txt");
 			//UserFile file1 = client.Get<UserFile> ("/fetchfile/piyush/z_x.txt");

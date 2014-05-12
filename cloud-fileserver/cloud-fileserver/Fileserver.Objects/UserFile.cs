@@ -45,8 +45,7 @@ namespace cloudfileserver
 			
 			return deleted;
 		}
-		
-		
+				
 		public UserFile getFileCloneSynchronized ()
 		{
 			object obj;

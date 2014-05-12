@@ -25,15 +25,19 @@ namespace cloudfileserver
 		public InMemoryFileSystem ()
 		{
 
-			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
+			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem> ();
 			try {
 				Logger.Debug ("Starting InMemoryFileSystemconstructor");
 				this.persistentstoreinteraction = new PersistentStoreInteraction ();
-				InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
-				
+				InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint ();	
 				this.clientToFileSystemMap = fs.clientToFileSystemMap;
+				foreach (KeyValuePair<string, UserFileSystem> entry in  this.clientToFileSystemMap) {
+					foreach (KeyValuePair<string,UserFile> innerEntry in entry.Value.filemap) {
+						innerEntry.Value.initializePrivateLock ();
+					}
+				}
+				
 				this.lastcheckpoint = fs.lastcheckpoint;
-				//Logger.Debug("XXX : " + Utils.getStringFromByteArray(this.clientToFileSystemMap["piyush"].filemap["x.txt"].filecontent));
 				Logger.Debug(this.ToString());
 
 			} catch (Exception e) {
@@ -90,18 +94,17 @@ namespace cloudfileserver
 				
 				file = fs.getFileCloneSynchronized (filename); //this is the cloned copy of file, do whatever you want
 					
+				//this is the case when file is not present in the map
+				if (file == null) {
+					throw new FileNotFoundException ("File with name :" + filename + 
+						" not found for owner : " + fileowner
+					);
+				}
 				//this is the case when file is present in the map but marked for deletion
 				if (file.filemetadata.markedForDeletion == true) {
 					Logger.Debug ("File, present but marked for deletion");
 					throw new FileNotFoundException ("File with name :" + filename + 
 						" marked for deletion for owner : " + fileowner
-					);
-				}
-				
-				//this is the case when file is not present in the map
-				if (file == null) {
-					throw new FileNotFoundException ("File with name :" + filename + 
-						" not found for owner : " + fileowner
 					);
 				}
 				
@@ -116,6 +119,13 @@ namespace cloudfileserver
 						fileowner + "is not shared with " + clientId
 					);
 				}
+			}
+			
+			if (file.filecontent == null || file.filecontent.Length == 0) {
+				UserFile diskFile = this.persistentstoreinteraction.fetchFileFromDisk (fileowner, filename);
+				fs.filemap [filename].filecontent = diskFile.filecontent; //setting this in fs as well
+				file.filecontent = diskFile.filecontent;
+				fs.metadata.totalFileSystemSizeBytes += file.filecontent.Length;
 			}
 			return file;
 		}
