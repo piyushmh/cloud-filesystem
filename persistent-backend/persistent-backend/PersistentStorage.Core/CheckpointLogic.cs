@@ -303,7 +303,7 @@ namespace persistentbackend
 			 * 
 			 */
 			
-			if (newfs.metadata.versionNumber >= oldfs.metadata.versionNumber) {
+			if (newfs.metadata.versionNumber > oldfs.metadata.versionNumber) {
 				oldfs.metadata = newfs.metadata; //replace
 			} else {
 				logger.Warn ("The version number for the new user metadata is lower than the old, FIX ME FIX ME");
@@ -332,7 +332,7 @@ namespace persistentbackend
 					
 				} else { // case where there is old file and new file
 					
-					if (newfile.filemetadata.versionNumber >= oldfile.filemetadata.versionNumber) { //lets roll
+					if (newfile.filemetadata.versionNumber > oldfile.filemetadata.versionNumber) { //lets roll
 						if (newfile.filemetadata.markedForDeletion == true) { //remove this file now
 							logger.Debug ("File marked for deletion, removing : " + filename);
 							oldfs.removeFromMap (filename); //this will decrement the size
@@ -341,6 +341,9 @@ namespace persistentbackend
 							oldfs.filemap [filename] = newfile;
 							//oldfs.incrementTotalFileSystemSize (sizediff);
 						}
+					} else {
+						logger.Debug ("Version number of new content is not greater, skipping : " + newfile.filemetadata.versionNumber + " " 
+						              + oldfile.filemetadata.versionNumber);
 					}
 				}
 				

@@ -145,6 +145,9 @@ namespace persistentbackend
 
 		public byte[] ReadFileContent ()
 		{
+			if (this.filecontent == null)
+				return new byte[0];
+			
 			byte[] b = new byte[this.filecontent.Length];
 			Buffer.BlockCopy (this.filecontent, 0, b, 0, this.filecontent.Length);
 			return b;

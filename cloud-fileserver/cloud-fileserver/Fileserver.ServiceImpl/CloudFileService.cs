@@ -67,7 +67,11 @@ namespace cloudfileserver
 		public string password {get; set;}
 	}
 
-
+	[Route("/doPersistentCheckPoint/{clientId}/{password}", "POST")]
+	public class DoPersistentCheckPoint{
+		public string clientId {get; set;}
+		public string password {get; set;}
+	}
 
 	public class CloudFileService : Service
 	{
@@ -123,6 +127,12 @@ namespace cloudfileserver
 				+ " and file name : " + request.file.filemetadata.filepath
 			);
 		
+			
+			if (request.file.filecontent == null) {
+				logger.Info ("POOOOP + " + request.file.filecontent);	
+			}
+			
+			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
 			}
@@ -211,6 +221,20 @@ namespace cloudfileserver
 					logger.Debug ("The file : " + request.filepath + " was already marked for deletion, skipping");
 				}
 				
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
+			}
+		}
+		
+		public void Post (DoPersistentCheckPoint request)
+		{
+			logger.Info ("****Request received for do persistent checkpoint");
+			try {
+				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+					throw new AuthenticationException ("Authentication failed");
+				}
+				filesystem.doPersistentCheckPoint ();
 			} catch (Exception e) {
 				logger.Warn (e);
 				throw e;

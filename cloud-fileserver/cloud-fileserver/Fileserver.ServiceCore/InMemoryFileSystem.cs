@@ -51,6 +51,14 @@ namespace cloudfileserver
 			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
 		}
 
+		
+		public void doPersistentCheckPoint ()
+		{
+			Logger.Debug ("Do persistent checkpoint");
+			this.persistentstoreinteraction.DoCheckPoint (this);
+			return;
+		}
+		
 		/*
 		 * This method is used to authenticate a user 
 		 */

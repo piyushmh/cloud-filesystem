@@ -6,7 +6,7 @@ namespace cloudfileserver
 {
 	[Serializable]
 	public class DoCheckPoint{
-		public CheckPointObject checkpoint  { get; set; }
+		public CheckPointObject checkPointObject  { get; set; }
 	}
 
 	[Serializable]
@@ -33,18 +33,16 @@ namespace cloudfileserver
 		
 		public void DoCheckPoint (InMemoryFileSystem filesystem)
 		{
-			logger.Debug("Request recieved for checkpointing userfile system");
-			JsonServiceClient client  = new JsonServiceClient(PERSISTENT_STORAGE_SERVICE_ENDPOINT);
-			CheckPointObject checkPointObject = new CheckPointObject();
+			logger.Debug ("Request recieved for checkpointing userfile system");
+			JsonServiceClient client = new JsonServiceClient (PERSISTENT_STORAGE_SERVICE_ENDPOINT);
+			CheckPointObject checkPointObject = new CheckPointObject ();
 
-			foreach( KeyValuePair<string, UserFileSystem> entry in filesystem.clientToFileSystemMap){
-				checkPointObject.userfilesystemlist.Add( entry.Value);
+			foreach (KeyValuePair<string, UserFileSystem> entry in filesystem.clientToFileSystemMap) {
+				checkPointObject.userfilesystemlist.Add (entry.Value);
 			}
 
 			checkPointObject.lastcheckpoint = DateTime.Now;
-			DoCheckPoint arg = new DoCheckPoint();
-			arg.checkpoint = checkPointObject;
-			client.Post<DoCheckPointResponse>("/doCheckPoint", arg);
+			client.Post<Object> ("/doCheckPoint", new DoCheckPoint{checkPointObject = checkPointObject});
 		}
 
 		

@@ -38,7 +38,7 @@ namespace persistentbackend
 		public object Get (RestoreCheckPoint request)
 		{
 			try{
-				logger.Debug("API call for restoring the check point");
+				logger.Debug("Request received for restoring the check point");
 				CheckPointObject obj =  new CheckpointLogic().RestoreFileSystem(false);
 				return obj;
 			} catch (Exception e) {
@@ -50,7 +50,10 @@ namespace persistentbackend
 		public void Post (DoCheckPoint request)
 		{
 			try {
-				logger.Debug ("API Request received for checkpointing ");
+				if (request.checkPointObject == null) {
+					logger.Warn ("DAFUQ");
+				}
+				logger.Debug ("Request received for checkpointing for time : " + request.checkPointObject.lastcheckpoint);
 				new CheckpointLogic ().DoCheckPointAllUsers (request.checkPointObject);
 
 			} catch (Exception e) {

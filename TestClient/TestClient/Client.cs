@@ -26,6 +26,10 @@ namespace TestClient{
 	public class FlushFile{
 		public UserFile file { get; set;}
 	}
+	
+	//[Route("/doPersistentCheckPoint/{clientId}/{password}", "POST")]
+	public class DoPersistentCheckPoint{}
+	
 	public class Client
 	{
 		public static void Main ()
@@ -34,12 +38,14 @@ namespace TestClient{
 			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8080");
 			//UpdateFile arg = new UpdateFile();
 			UserFile file = new UserFile ("x.txt", "piyush");
-			file.filecontent = getByteArrayFromString ("Bitches this is the new file content");
+			file.filecontent = new byte[0];//getByteArrayFromString ("Bitches this is the new file content");
 			file.filemetadata.versionNumber = 3;
 			file.filemetadata.filesize = file.filecontent.Length;
-			UserFile f = client.Get<UserFile> ("/file/piyush/password/x_z.txt/piyush");
-			Console.WriteLine (f);
-
+			//client.Post<Object>("/updatefile/piyush/password", new UpdateFile{file= file});
+			//UserFile f = client.Get<UserFile> ("/file/piyush/password/z_x.txt/piyush");
+			//Console.WriteLine (f);
+			client.Post<object> ("/doPersistentCheckPoint/piyush/password", new DoPersistentCheckPoint ());
+			
 			//arg.file = file;
 			//UserFile file = client.Get<UserFile> ("/fetchfile/piyush/x_z.txt");
 			//UserFile file1 = client.Get<UserFile> ("/fetchfile/piyush/z_x.txt");
