@@ -21,6 +21,11 @@ namespace TestClient{
 	public class DoCheckPoint{
 		public CheckPointObject checkPointObject { get; set;}
 	}
+	
+	[Serializable]
+	public class FlushFile{
+		public UserFile file { get; set;}
+	}
 	public class Client
 	{
 		public static void Main ()
@@ -28,10 +33,18 @@ namespace TestClient{
 
 			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8081");
 			//UpdateFile arg = new UpdateFile();
-			//UserFile file = new UserFile ("x.txt", "piyush");
-			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
+			UserFile file = new UserFile ("x.txt", "piyush");
+			file.filecontent = getByteArrayFromString ("Bitches this is the new file content");
+			file.filemetadata.versionNumber = 3;
+			file.filemetadata.filesize = file.filecontent.Length;
+			client.Post<Object> ("/flushfile", new FlushFile{ file = file});
 			//arg.file = file;
-			CheckPointObject obj = new CheckPointObject ();
+			//UserFile file = client.Get<UserFile> ("/fetchfile/piyush/x_z.txt");
+			//UserFile file1 = client.Get<UserFile> ("/fetchfile/piyush/z_x.txt");
+			//client.Get<UserFile> ("/fetchfile/piyush/z_z.txt");
+			//Console.WriteLine (file);
+			//Console.WriteLine (file1);
+			/*CheckPointObject obj = new CheckPointObject ();
 			obj.lastcheckpoint = DateTime.Now;
 			Console.WriteLine (obj.lastcheckpoint);
 			UserFileSystem fs = new UserFileSystem ();
@@ -81,6 +94,7 @@ namespace TestClient{
 			//UserFile f = client.Get<UserFile> ("/file/piyush/password/y_x.txt/piyush");
 			//Console.Write (f);
 			//client.Post<Object> ("/deletefile/piyush/password/y_x.txt", new DeleteFile());
+			*/
 			
 		}
 

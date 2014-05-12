@@ -19,6 +19,17 @@ namespace persistentbackend
 
 	}
 
+	[Route("/fetchfile/{username}/{filename}" , "GET")]
+	public class FetchFile{
+		public string username { get; set;}
+		public string filename { get; set;}
+	}
+	
+	[Route("/flushfile", "POST")]
+	public class FlushFile{
+		public UserFile file { get; set;}
+	}
+	
 	public class PersistentStorageService : Service
 	{
 		private static readonly log4net.ILog logger = 
@@ -28,7 +39,7 @@ namespace persistentbackend
 		{
 			try{
 				logger.Debug("API call for restoring the check point");
-				CheckPointObject obj =  new CheckpointLogic().RestoreFileSystem(true);
+				CheckPointObject obj =  new CheckpointLogic().RestoreFileSystem(false);
 				return obj;
 			} catch (Exception e) {
 				logger.Debug(e);
@@ -40,9 +51,6 @@ namespace persistentbackend
 		{
 			try {
 				logger.Debug ("API Request received for checkpointing ");
-				if (request.checkPointObject == null) {
-					logger.Warn ("DAFUQ");
-				}
 				new CheckpointLogic ().DoCheckPointAllUsers (request.checkPointObject);
 
 			} catch (Exception e) {
@@ -51,6 +59,29 @@ namespace persistentbackend
 			}
 		}
 
+		public UserFile Get (FetchFile request)
+		{
+			try {
+				logger.Info ("Request received for fetching file for user : " + request.filename + " " + request.username);
+				UserFile file = new FileOperations ().fetchFile (request.username, request.filename);
+				return file;
+				
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
+			}
+		}
 
+		
+		public void Post (FlushFile request)
+		{
+			try {
+				logger.Info ("Request received for file name and user  : " + request.file.filemetadata.owner + " " + request.file.filemetadata.filepath); 
+				new FileOperations ().FlushFile (request.file);
+			} catch (Exception e) {
+				logger.Warn (e);
+				throw e;
+			}
+		}
 	}
 }

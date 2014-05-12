@@ -12,16 +12,16 @@ namespace persistentbackend
 			log4net.LogManager.GetLogger(typeof(CheckpointLogic));
 
 		//This works on linux. Will read this from config later and make this OS agnostic
-		private string pathprefix = "../../persistent-disk/"; 
+		public static string pathprefix = "../../persistent-disk/"; 
 
-		private string USERINFOFILENAME = "user-info.txt";
+		public static string USERINFOFILENAME = "user-info.txt";
 		
-		private string FILEINFOFILENAME = "file-info.txt";
+		public static string FILEINFOFILENAME = "file-info.txt";
 		
-		private string SHAREDFILEINFONAME = "shared-info.txt";
+		public static string SHAREDFILEINFONAME = "shared-info.txt";
 
 		/*Name of file which stores the last check point path*/
-		private string lastcheckpointfilename = "lastcheckpoint.txt";  //name of the file contains the last checkpoint time stamp, this is just next to the path prefix folder
+		public static string lastcheckpointfilename = "lastcheckpoint.txt";
 
 		public CheckpointLogic (){} 
 
@@ -62,9 +62,9 @@ namespace persistentbackend
 			UserFileSystem userfilesystem = new UserFileSystem (); //this is what we return from this method
 			string user = new DirectoryInfo (userdir).Name; //fetch the user name from directory name
 			
-			string userinfofilepath = userdir + Path.DirectorySeparatorChar + this.USERINFOFILENAME;
-			string fileinfofileapth = userdir + Path.DirectorySeparatorChar + this.FILEINFOFILENAME;
-			string sharedfileinfofilepath = userdir + Path.DirectorySeparatorChar + this.SHAREDFILEINFONAME;
+			string userinfofilepath = userdir + Path.DirectorySeparatorChar + CheckpointLogic.USERINFOFILENAME;
+			string fileinfofileapth = userdir + Path.DirectorySeparatorChar + CheckpointLogic.FILEINFOFILENAME;
+			string sharedfileinfofilepath = userdir + Path.DirectorySeparatorChar + CheckpointLogic.SHAREDFILEINFONAME;
 			
 			//First restore the user info
 			List<String> metadatafilecontent = FileUtils.ReadLinesFromFile (userinfofilepath);
@@ -80,8 +80,8 @@ namespace persistentbackend
 				long.Parse (metadatafilecontent [3].Trim ())
 			);
 			
-			logger.Fatal ("SEE : " + long.Parse (metadatafilecontent [3].Trim ()));	
-			logger.Fatal ("SEE : " + userfilesystem.metadata.ToString());			
+			//logger.Fatal ("SEE : " + long.Parse (metadatafilecontent [3].Trim ()));	
+			//logger.Fatal ("SEE : " + userfilesystem.metadata.ToString());			
 			
 			//now restore the shared files
 			List<string> sharedFileNames = FileUtils.ReadLinesFromFile (sharedfileinfofilepath);
@@ -112,8 +112,8 @@ namespace persistentbackend
 			return userfilesystem;
 		}
 
-
-		private UserFile RestoreUserFile (string userdir, string relativefilepath, bool restoreFileContent)
+		
+		public UserFile RestoreUserFile (string userdir, string relativefilepath, bool restoreFileContent)
 		{	
 			logger.Debug ("Restoring user file for file path and flag :" + userdir + " " + relativefilepath + " " + restoreFileContent);
 			string completefilepath = userdir + Path.DirectorySeparatorChar 
@@ -126,7 +126,8 @@ namespace persistentbackend
 			if (userfilemetadata.Count < 2)
 				throw new DiskuserMetaDataCorrupt ("File meta data corrupt for file  : " + relativefilepath);
 			
-			UserFile file = GetFileFromFileMetaData (FileUtils.getMemoryPathFromDiskPath(relativefilepath), userfilemetadata);
+			UserFile file = GetFileFromFileMetaData (FileUtils.getMemoryPathFromDiskPath(relativefilepath),
+			                                         userfilemetadata);
 			
 			//this makes sure that in case of checkpointing this stuff, we don't load the file content, I know it's pretty neat :)
 			if (restoreFileContent) 
@@ -171,11 +172,11 @@ namespace persistentbackend
 			filesystem.lastcheckpoint = newCheckPointTime;
 			//logger.Debug (filesystem);
 			
-			try{
+			try {
 				string path = GenerateCheckpointPath (filesystem.lastcheckpoint);
 				logger.Debug ("Creating checkpointing path :" + path);
 				Directory.CreateDirectory (path);
-				string lastcheckpointfilepath = this.pathprefix + this.lastcheckpointfilename;
+				string lastcheckpointfilepath = CheckpointLogic.pathprefix + CheckpointLogic.lastcheckpointfilename;
 				foreach( UserFileSystem userfs in filesystem.userfilesystemlist){
 					DoCheckPointForUser( userfs.metadata.clientId, path, userfs);
 				}
@@ -203,9 +204,9 @@ namespace persistentbackend
 
 			string userpath = path + user + Path.DirectorySeparatorChar; //Appending '/' for linux and '\' on windows
 			Directory.CreateDirectory (userpath);
-			string usermetadatafilepath = userpath + this.USERINFOFILENAME;
-			string sharedfilemetadatapath = userpath + this.SHAREDFILEINFONAME;
-			string filemetadatafilepath = userpath + this.FILEINFOFILENAME;
+			string usermetadatafilepath = userpath + CheckpointLogic.USERINFOFILENAME;
+			string sharedfilemetadatapath = userpath + CheckpointLogic.SHAREDFILEINFONAME;
+			string filemetadatafilepath = userpath + CheckpointLogic.FILEINFOFILENAME;
 			
 			string usermetadata = userfilesystem.metadata.clientId + 
 				"\n" + userfilesystem.metadata.password +
@@ -353,11 +354,12 @@ namespace persistentbackend
 			return Path.GetDirectoryName(fullpath) + Path.DirectorySeparatorChar;
 		}
 
-		private string GenerateCheckpointPath(DateTime checkpointtime){
+		private string GenerateCheckpointPath (DateTime checkpointtime)
+		{
 			DateTime time = checkpointtime;
 			string path = time.Year + "-" + time.Month + "-" + time.Day + Path.DirectorySeparatorChar + 
 				time.Hour + "-" + time.Minute + Path.DirectorySeparatorChar;
-			return this.pathprefix + path;
+			return CheckpointLogic.pathprefix + path;
 		}
 	}
 }
