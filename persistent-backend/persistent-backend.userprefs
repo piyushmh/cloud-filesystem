@@ -1,17 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="persistent-backend/PersistentStorage.Core/FileOperations.cs">
     <Files>
       <File FileName="persistent-backend/PersistentStore.Objects/SharedFile.cs" Line="3" Column="28" />
-      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="96" Column="6" />
-      <File FileName="persistent-backend/PersistentStore.Objects/UserFile.cs" Line="133" Column="3" />
+      <File FileName="persistent-backend/Utils/FileUtils.cs" Line="35" Column="3" />
+      <File FileName="persistent-backend/PersistentStorage.ServiceImpl/PersistentStorageService.cs" Line="79" Column="142" />
+      <File FileName="persistent-backend/PersistentStorage.Core/FileOperations.cs" Line="51" Column="63" />
+      <File FileName="persistent-backend/PersistentStorage.Core/CheckpointLogic.cs" Line="254" Column="74" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="persistent-backend" expanded="True">
             <Node name="PersistentStorage.Core" expanded="True">
-              <Node name="CheckpointLogic.cs" selected="True" />
+              <Node name="FileOperations.cs" selected="True" />
             </Node>
             <Node name="PersistentStorage.Exception" expanded="True" />
             <Node name="PersistentStorage.ServiceImpl" expanded="True" />

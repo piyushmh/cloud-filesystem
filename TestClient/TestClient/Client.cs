@@ -31,13 +31,13 @@ namespace TestClient{
 		public static void Main ()
 		{
 
-			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8081");
+			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8080");
 			//UpdateFile arg = new UpdateFile();
 			UserFile file = new UserFile ("x.txt", "piyush");
 			file.filecontent = getByteArrayFromString ("Bitches this is the new file content");
 			file.filemetadata.versionNumber = 3;
 			file.filemetadata.filesize = file.filecontent.Length;
-			client.Post<Object> ("/flushfile", new FlushFile{ file = file});
+			client.Post<Object> ("/adduser/karthik/password", new AddUser());
 			//arg.file = file;
 			//UserFile file = client.Get<UserFile> ("/fetchfile/piyush/x_z.txt");
 			//UserFile file1 = client.Get<UserFile> ("/fetchfile/piyush/z_x.txt");

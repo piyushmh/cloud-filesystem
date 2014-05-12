@@ -19,6 +19,7 @@ namespace cloudfileserver
 					this.Config.DefaultContentType = "Json";	
 					//container.RegisterAutoWired<InMemoryFileSystem>();
 					container.Register<InMemoryFileSystem>(c => new InMemoryFileSystem());
+					
 		        }
 			 }
 

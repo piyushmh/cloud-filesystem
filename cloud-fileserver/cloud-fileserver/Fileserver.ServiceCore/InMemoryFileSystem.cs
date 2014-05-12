@@ -20,7 +20,7 @@ namespace cloudfileserver
 		private static readonly log4net.ILog Logger = 
 			log4net.LogManager.GetLogger(typeof(InMemoryFileSystem));
 
-		//private PersistentStoreInteraction persistentstoreinteraction;
+		private PersistentStoreInteraction persistentstoreinteraction;
 
 		public InMemoryFileSystem ()
 		{
@@ -28,18 +28,16 @@ namespace cloudfileserver
 			this.clientToFileSystemMap = new Dictionary<string, UserFileSystem>();
 			try {
 				Logger.Debug ("Starting InMemoryFileSystemconstructor");
-
+				this.persistentstoreinteraction = new PersistentStoreInteraction ();
+				InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
 				
-				//this.persistentstoreinteraction = new PersistentStoreInteraction ();
-				//InMemoryFileSystem fs = this.persistentstoreinteraction.RestoreCheckPoint();
-				
-				//this.clientToFileSystemMap = fs.clientToFileSystemMap;
-				//this.lastcheckpoint = fs.lastcheckpoint;
-				//Logger.Debug(this.ToString());
+				this.clientToFileSystemMap = fs.clientToFileSystemMap;
+				this.lastcheckpoint = fs.lastcheckpoint;
 				//Logger.Debug("XXX : " + Utils.getStringFromByteArray(this.clientToFileSystemMap["piyush"].filemap["x.txt"].filecontent));
+				Logger.Debug(this.ToString());
 
 			} catch (Exception e) {
-				Logger.Debug("Exception caught :"  + e);
+				Logger.Debug("Exception caught while initiliazing in memory file system constructor:"  + e);
 				throw e;
 			}
 		}

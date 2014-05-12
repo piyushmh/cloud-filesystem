@@ -9,18 +9,19 @@ namespace cloudfileserver
 	}
 
 	public class DoCheckPointResponse{}
+
 	public class RestoreCheckPoint : IReturn<CheckPointObject>{}
-
-
+	
 	public class PersistentStoreInteraction
 	{
-		public static string PERSISTENT_STORAGE_SERVICE_ENDPOINT = "http://127.0.0.1:8081";
+		public static string PERSISTENT_STORAGE_SERVICE_ENDPOINT = "http://128.84.216.57:8081";
 
 		private static readonly log4net.ILog logger = 
 			log4net.LogManager.GetLogger(typeof(PersistentStoreInteraction));
 
 		public PersistentStoreInteraction (){}
 
+		
 		public void DoCheckPoint (InMemoryFileSystem filesystem)
 		{
 			logger.Debug("Request recieved for checkpointing userfile system");
