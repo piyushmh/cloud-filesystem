@@ -1,27 +1,31 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cloud-fileserver/Global.asax">
     <Files>
       <File FileName="cloud-fileserver/Fileserver.Exceptions/VersionNumberConflictException.cs" Line="12" Column="1" />
-      <File FileName="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs" Line="186" Column="27" />
-      <File FileName="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs" Line="184" Column="53" />
+      <File FileName="cloud-fileserver/Fileserver.ServiceImpl/CloudFileService.cs" Line="140" Column="35" />
       <File FileName="cloud-fileserver/Fileserver.Objects/UserFileSystemMetaData.cs" Line="26" Column="1" />
-      <File FileName="cloud-fileserver/Fileserver.Objects/UserFileSystem.cs" Line="202" Column="4" />
-      <File FileName="cloud-fileserver/Fileserver.Objects/CheckPointObject.cs" Line="1" Column="1" />
       <File FileName="cloud-fileserver/Fileserver.Objects/SharedFile.cs" Line="1" Column="1" />
-      <File FileName="cloud-fileserver/Fileserver.Objects/UserFile.cs" Line="27" Column="3" />
-      <File FileName="cloud-fileserver/Fileserver.Objects/UserMetaData.cs" Line="27" Column="108" />
+      <File FileName="cloud-fileserver/Global.asax.cs" Line="22" Column="6" />
+      <File FileName="cloud-fileserver/Fileserver.Objects/UserFileSystem.cs" Line="206" Column="50" />
+      <File FileName="cloud-fileserver/Fileserver.PersistentStore/PersistentStoreInteraction.cs" Line="45" Column="75" />
+      <File FileName="cloud-fileserver/Fileserver.Objects/UserFile.cs" Line="13" Column="2" />
+      <File FileName="cloud-fileserver/Fileserver.ServiceCore/InMemoryFileSystem.cs" Line="242" Column="34" />
+      <File FileName="cloud-fileserver/packages.config" Line="1" Column="1" />
+      <File FileName="cloud-fileserver/web.config" Line="1" Column="1" />
+      <File FileName="cloud-fileserver/Global.asax" Line="1" Column="1" />
+      <File FileName="cloud-fileserver/AssemblyInfo.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="cloud-fileserver" expanded="True">
+            <Node name="Fileserver.Exceptions" expanded="True" />
             <Node name="Fileserver.Objects" expanded="True" />
             <Node name="Fileserver.PersistentStore" expanded="True" />
-            <Node name="Fileserver.ServiceCore" expanded="True">
-              <Node name="InMemoryFileSystem.cs" selected="True" />
-            </Node>
+            <Node name="Fileserver.ServiceCore" expanded="True" />
             <Node name="Fileserver.ServiceImpl" expanded="True" />
+            <Node name="Global.asax" expanded="True" selected="True" />
           </Node>
         </State>
       </Pad>

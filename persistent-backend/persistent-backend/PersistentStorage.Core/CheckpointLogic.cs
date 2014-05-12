@@ -262,11 +262,17 @@ namespace persistentbackend
 		{
 			logger.Debug ("Merge check point objects");
 			CheckPointObject retObject = new CheckPointObject (); //ret object
-			foreach (UserFileSystem oldfs in oldimage.userfilesystemlist) {
-				foreach (UserFileSystem newfs in newimage.userfilesystemlist) {
+			
+			foreach (UserFileSystem newfs in newimage.userfilesystemlist) {
+				bool found = false;
+				foreach (UserFileSystem oldfs in oldimage.userfilesystemlist) {
 					if (oldfs.metadata.clientId.Equals (newfs.metadata.clientId)) { //match based on user id
-						retObject.userfilesystemlist.Add(mergeUserFileSystems (newfs, oldfs));				
+						found = true;
+						retObject.userfilesystemlist.Add (mergeUserFileSystems (newfs, oldfs));				
 					}
+				}
+				if (! found) {
+					retObject.userfilesystemlist.Add (newfs);
 				}
 			}
 			return retObject;
