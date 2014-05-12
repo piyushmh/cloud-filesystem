@@ -32,6 +32,8 @@ namespace TestClient{
 			//file.SetFileContent (getByteArrayFromString ("Filecontent"), 0);
 			//arg.file = file;
 			CheckPointObject obj = new CheckPointObject ();
+			obj.lastcheckpoint = DateTime.Now;
+			Console.WriteLine (obj.lastcheckpoint);
 			UserFileSystem fs = new UserFileSystem ();
 			UserFile file = new UserFile ("x_z.txt", "piyush");
 			file.filecontent = Encoding.UTF8.GetBytes ("this");

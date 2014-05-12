@@ -31,23 +31,27 @@ namespace persistentbackend
 			CheckPointObject checkObject = new CheckPointObject (); 
 			string lastcheckpointfilepath = pathprefix + lastcheckpointfilename; 
 
-			List<string> lastcheckpointfilecontent = FileUtils.ReadLinesFromFile (lastcheckpointfilepath);
-			logger.Debug ("Last check point time stamp read :" + lastcheckpointfilecontent [0].Trim ());
-			DateTime lastcheckpointtime = DateUtils.getDatefromString (lastcheckpointfilecontent [0].Trim ());
+			try {
+				List<string> lastcheckpointfilecontent = FileUtils.ReadLinesFromFile (lastcheckpointfilepath);
+				logger.Debug ("Last check point time stamp read :" + lastcheckpointfilecontent [0].Trim ());
+				DateTime lastcheckpointtime = DateUtils.getDatefromString (lastcheckpointfilecontent [0].Trim ());
 
-			logger.Debug ("Read last checkpoint time as :" + lastcheckpointtime);
-			checkObject.lastcheckpoint = lastcheckpointtime;
-			if (lastcheckpointfilecontent.Count < 2)
-				throw new DiskuserMetaDataCorrupt ("Something wrong with the last check point file path, check!!");
+				logger.Debug ("Read last checkpoint time as :" + lastcheckpointtime);
+				checkObject.lastcheckpoint = lastcheckpointtime;
+				if (lastcheckpointfilecontent.Count < 2)
+					throw new DiskuserMetaDataCorrupt ("Something wrong with the last check point file path, check!!");
 			
-			string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; 
-			logger.Debug ("Last check point path read as :" + latestcheckpointfolderpath);
-			latestcheckpointfolderpath = latestcheckpointfolderpath.Trim (); //remove any leading or trailing whitespaces
-			foreach (string userfolder in Directory.EnumerateDirectories(latestcheckpointfolderpath)) {
-				checkObject.userfilesystemlist.Add (RestoreUserFileSystem (userfolder, restoreFileContent));	
+				string latestcheckpointfolderpath = lastcheckpointfilecontent [1]; 
+				logger.Debug ("Last check point path read as :" + latestcheckpointfolderpath);
+				latestcheckpointfolderpath = latestcheckpointfolderpath.Trim (); //remove any leading or trailing whitespaces
+				foreach (string userfolder in Directory.EnumerateDirectories(latestcheckpointfolderpath)) {
+					checkObject.userfilesystemlist.Add (RestoreUserFileSystem (userfolder, restoreFileContent));	
+				}
+				logger.Debug ("Returning the check point object as :" + checkObject.userfilesystemlist.Count);
+			
+			} catch (Exception e) {
+				logger.Warn ("Exception occured while restoring the file system : " + e);
 			}
-			
-			logger.Debug ("Returning the check point object as :" + checkObject.userfilesystemlist.Count);
 			return checkObject;
 		}
 		
@@ -157,13 +161,14 @@ namespace persistentbackend
 		/*Check point entry */
 		public void DoCheckPointAllUsers (CheckPointObject filesystem)
 		{
-			logger.Debug ("Do Check point method called for filesystem");
+			logger.Debug ("Do Check point method called for filesystem for timestamp : " + filesystem.lastcheckpoint);
 			CheckPointObject oldcheckpointobject = RestoreFileSystem (true); //load the old file in memory to merege
 		
 			//logger.Debug ("POOP1  : " + oldcheckpointobject.userfilesystemlist[0].metadata.totalFileSystemSizeBytes);
 			//logger.Debug ("POOP2  : " + filesystem.userfilesystemlist[0].metadata.totalFileSystemSizeBytes);
+			DateTime newCheckPointTime = filesystem.lastcheckpoint;
 			filesystem = mergeCheckPointObjects (filesystem, oldcheckpointobject);
-			
+			filesystem.lastcheckpoint = newCheckPointTime;
 			//logger.Debug (filesystem);
 			
 			try{
@@ -233,14 +238,17 @@ namespace persistentbackend
 			
 			//Now we write the file content on disk
 			foreach (KeyValuePair<string, UserFile> entry in  userfilesystem.filemap) {
-				string parentdir = GetParentDirectoryPath( entry.Key);
+				string parentdir = FileUtils.getDiskPathFromMemoryPath (entry.Key);
+				parentdir = GetParentDirectoryPath (parentdir);
 				string filepath = userpath + "files" + Path.DirectorySeparatorChar;
 				string metadatapath = userpath + "metadata" + Path.DirectorySeparatorChar;
-				Directory.CreateDirectory(filepath + parentdir);
-				Directory.CreateDirectory(metadatapath + parentdir);
+				Directory.CreateDirectory (FileUtils.getDiskPathFromMemoryPath (filepath + parentdir));
+				Directory.CreateDirectory (FileUtils.getDiskPathFromMemoryPath (metadatapath + parentdir));
 
-				string completefilepath = filepath + entry.Key;
-				string completemetadatafilepath = metadatapath + entry.Key + ".dat";
+				string completefilepath = filepath + FileUtils.getDiskPathFromMemoryPath (entry.Key);
+				string completemetadatafilepath = metadatapath + FileUtils.getDiskPathFromMemoryPath(entry.Key)
+					+ ".dat";
+					
 				System.IO.File.WriteAllText( completemetadatafilepath, entry.Value.GenerateMetaDataStringFromFile());
 				File.WriteAllBytes( completefilepath, entry.Value.ReadFileContent());
 			}
