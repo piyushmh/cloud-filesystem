@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web;
 using System.Web.SessionState;
+using Isis;
 using ServiceStack;
 
 
@@ -127,21 +128,29 @@ namespace cloudfileserver
 				+ " and file name : " + request.file.filemetadata.filepath
 			);
 		
-			
-			if (request.file.filecontent == null) {
-				logger.Info ("POOOOP + " + request.file.filecontent);	
-			}
-			
-			
 			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 				throw new AuthenticationException ("Authentication failed");
 			}
-			try {
-				filesystem.addFileSynchronized (request.clientId, request.file);
-			} catch (Exception e) {
-				logger.Debug ("Exception occured while updating user file for client id  : " + request.clientId
-					+ " and file name : " + request.file.filemetadata.filepath, e);
-				throw e;
+
+			// Send the File to the All other Nodes in a Ordered Way
+			FileServerComm serverComm = FileServerComm.getInstance ();
+			Address [] memberAdresses = serverComm.getFileServerGroup ().getLiveMembers();
+
+			List<Address> where = new List<Address>();
+			where.AddRange(memberAdresses);
+
+			if (true == serverComm.getFileHandler ().sendsynchaddFileToMemory (request.clientId, request.file,
+			                                                                   serverComm.getOOBHandler(),serverComm.getFileServerGroup(),
+			                                                                    where)) {
+				try {
+					filesystem.addFileSynchronized (request.clientId, request.file);
+				} catch (Exception e) {
+					logger.Debug ("Exception occured while updating user file for client id  : " + request.clientId
+					              + " and file name : " + request.file.filemetadata.filepath, e);
+					throw e;
+				}
+			} else {
+				throw new Exception("File Cannot be Added, Some Internal error");
 			}
 
 		}
@@ -153,36 +162,62 @@ namespace cloudfileserver
 				+ " and password : " + request.password
 			);
 
-			try {
-				bool ispresent = 
-				filesystem.addUserSynchronized (request.clientId, request.password);
-				
-				if (! ispresent) {
-					logger.Debug ("User is already present in inmemory map, throwing back exception");
-					throw new Exception ("User is already present in memory");
-				} else {
-					logger.Debug ("User added succesfully");
-				}	
-				
-			} catch (Exception e) {
-				logger.Debug (e);
-				throw e;
-			}	
+			// Send the user Data to Other Nodes in a Ordered Way
+			UserMetaData data = new UserMetaData(request.clientId, request.password, 0, 0);
 
+			FileServerComm serverComm = FileServerComm.getInstance ();
+			Address [] memberAdresses = serverComm.getFileServerGroup ().getLiveMembers();
+			
+			List<Address> where = new List<Address>();
+			where.AddRange(memberAdresses);
+
+			if (true == serverComm.getFileHandler ().sendsynchUserMetaData (data, serverComm.getOOBHandler (),
+			                                                  serverComm.getFileServerGroup ())) {
+				try {
+					bool ispresent = 
+						filesystem.addUserSynchronized (request.clientId, request.password);
+					
+					if (! ispresent) {
+						logger.Debug ("User is already present in inmemory map, throwing back exception");
+						throw new Exception ("User is already present in memory");
+					} else {
+						logger.Debug ("User added succesfully");
+					}	
+					
+				} catch (Exception e) {
+					logger.Debug (e);
+					throw e;
+				}
+			} else {
+				throw new Exception("User Add Exception");
+			}
 		}
-		
+
 		public void Post (ShareFileWithUser request)
 		{
 			
-			logger.Info ("****Request received for sharing file owned by user : " + request.clientId + " by user : " 
-				+ request.sharedWithUser + " for file name : " + request.filename
+			logger.Info ("****Request received for sharing file owned by user : " + request.sharedWithUser + " by user : " 
+				+ request.clientId + " for file name : " + request.filename
 			); 	
+			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+				throw new AuthenticationException ("Authentication failed");
+			}
+
+			FileServerComm serverComm = FileServerComm.getInstance ();
+			Address [] memberAdresses = serverComm.getFileServerGroup ().getLiveMembers ();
+			
+			List<Address> where = new List<Address> ();
+			where.AddRange (memberAdresses);
+
 			try {
-				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-					throw new AuthenticationException ("Authentication failed");
+				if (true == serverComm.getFileHandler ().sendSynchShareRequest (request, serverComm.getOOBHandler (),
+				                                                                serverComm.getFileServerGroup ())) {
+					filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
 				}
-				filesystem.shareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
-			} catch (Exception e) {
+				else {
+					throw new Exception("Internal Server Error");
+				}
+			} catch (Exception e){
 				logger.Warn (e);
 				throw e;
 			}
@@ -194,17 +229,30 @@ namespace cloudfileserver
 			logger.Info ("****Request received for un-sharing file owned by user : " + request.sharedWithUser + " by user : " 
 				+ request.clientId + " for file name : " + request.filename
 			); 	
+			if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
+				throw new AuthenticationException ("Authentication failed");
+			}
+
+			FileServerComm serverComm = FileServerComm.getInstance ();
+			Address [] memberAdresses = serverComm.getFileServerGroup ().getLiveMembers ();
+			
+			List<Address> where = new List<Address> ();
+			where.AddRange (memberAdresses);
+			
 			try {
-				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
-					throw new AuthenticationException ("Authentication failed");
+				if (true == serverComm.getFileHandler ().sendSynchUnShareRequest (request, serverComm.getOOBHandler (),
+				                                                                serverComm.getFileServerGroup ())) {
+					filesystem.unShareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
 				}
-				filesystem.unShareFileWithUser (request.clientId, request.filename, request.sharedWithUser);
-			} catch (Exception e) {
+				else {
+					throw new Exception("Internal Server Error");
+				}
+			} catch (Exception e){
 				logger.Warn (e);
 				throw e;
 			}
 		}
-	
+
 		public void Post (DeleteFile request)
 		{
 			logger.Info ("****Request received for deleting file : " + request.filepath + " owned by user : " + request.clientId);
@@ -214,11 +262,22 @@ namespace cloudfileserver
 				if (!filesystem.AuthenticateUser (request.clientId, request.password)) {
 					throw new AuthenticationException ("Authentication failed");
 				}
+
+				FileMetaData metadata = filesystem.getFileMetaDataCloneSynchronized(request.clientId, request.password, request.filepath);
+
+				FileServerComm serverComm = FileServerComm.getInstance ();
+				Address [] memberAdresses = serverComm.getFileServerGroup ().getLiveMembers ();
 				
-				bool delete = filesystem.deleteFileSynchronized (request.clientId, request.filepath);
-				
-				if (!delete) {
-					logger.Debug ("The file : " + request.filepath + " was already marked for deletion, skipping");
+				List<Address> where = new List<Address> ();
+				where.AddRange (memberAdresses);
+
+				if(true == serverComm.getFileHandler().sendsynchdeleteFile(metadata, serverComm.getOOBHandler (),
+				                                                           serverComm.getFileServerGroup ())) {
+					bool delete = filesystem.deleteFileSynchronized (request.clientId, request.filepath);
+					
+					if (!delete) {
+						logger.Debug ("The file : " + request.filepath + " was already marked for deletion, skipping");
+					}
 				}
 				
 			} catch (Exception e) {
@@ -226,8 +285,7 @@ namespace cloudfileserver
 				throw e;
 			}
 		}
-		
-		public void Post (DoPersistentCheckPoint request)
+			public void Post (DoPersistentCheckPoint request)
 		{
 			logger.Info ("****Request received for do persistent checkpoint");
 			try {

@@ -20,7 +20,7 @@ namespace cloudfileserver
 		public UserFile file { get; set;}
 	}
 
-	
+	[Serializable]
 	public class PersistentStoreInteraction
 	{
 		public static string PERSISTENT_STORAGE_SERVICE_ENDPOINT = "http://128.84.216.57:8081";

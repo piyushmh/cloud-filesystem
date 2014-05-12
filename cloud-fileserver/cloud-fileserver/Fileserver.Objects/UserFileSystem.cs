@@ -194,6 +194,7 @@ namespace cloudfileserver
 			lock (this.privateLock) {
 				
 				this.metadata.totalFileSystemSizeBytes += inc;
+			
 				Logger.Debug ("Updated total file system size is : " + this.metadata.totalFileSystemSizeBytes);
 				
 				if (this.metadata.totalFileSystemSizeBytes < 0) {
@@ -331,7 +332,27 @@ namespace cloudfileserver
 			return found;
 		}
 		
-		
+		/* Remove file from file map and update the size value of the file system accordingly */
+		public bool removeFromMap (string filename)
+		{
+			Logger.Debug ("Removing file from file map :" + filename);
+			
+			if (this.filemap.ContainsKey (filename)) {
+				this.metadata.totalFileSystemSizeBytes -= this.filemap [filename].filemetadata.filesize; //decrement the size
+				this.filemap.Remove (filename);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		public void invalidateAllContents ()
+		{
+			foreach (KeyValuePair<string, UserFile> entry in filemap) {
+				UserFile file = entry.Value;
+				file.SetFileContent(new byte[0],file.getFileVersionNumberSynchronized());
+			}
+		}
 		
 		public override string ToString ()
 		{	

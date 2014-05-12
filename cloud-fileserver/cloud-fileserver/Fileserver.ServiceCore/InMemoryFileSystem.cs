@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace cloudfileserver
 {
+	[Serializable]
 	public class InMemoryFileSystem
 	{
 		public Dictionary<string, UserFileSystem> clientToFileSystemMap {get;set;}
@@ -284,7 +285,7 @@ namespace cloudfileserver
 		}
 
 
-		private UserFileSystem getUserFSFromMapSynchronized (string clientid)
+		public UserFileSystem getUserFSFromMapSynchronized (string clientid)
 		{
 			Logger.Debug("Synchronized fetch file system from map for user :" + clientid);
 			lock (this.privateLock) {
@@ -297,7 +298,7 @@ namespace cloudfileserver
 		}
 
 
-		private bool addFSToMapSynchronized (UserFileSystem fs, string clientid)
+		public bool addFSToMapSynchronized (UserFileSystem fs, string clientid)
 		{
 			Logger.Debug ("Synchronized adding file system in map for client id  : " + clientid);
 
@@ -357,5 +358,23 @@ namespace cloudfileserver
 			return s;
 		}
 
+		public FileMetaData getFileMetaDataCloneSynchronized(string clientid, string password, string filename){	
+
+			UserFileSystem fs = getUserFSFromMapSynchronized (clientid);
+			
+			if (fs == null) {
+				throw new UserNotLoadedInMemoryException ("User not loaded in memory :" + clientid);
+			}
+
+			return fs.getFileMetaDataCloneSynchronized(filename);
+		}
+
+		void invalidateAllContents ()
+		{
+			foreach (KeyValuePair<string, UserFileSystem> entry in clientToFileSystemMap) {
+				UserFileSystem newFileSystem = entry.Value;
+				newFileSystem.invalidateAllContents();
+			}
+		}
 	}
 }
