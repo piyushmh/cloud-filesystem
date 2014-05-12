@@ -12,22 +12,22 @@
     <AssemblyName>cloud-fileserver</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,6 +58,8 @@
     <Reference Include="Common.Logging.Log4Net">
       <HintPath>..\packages\Common.Logging.Log4Net.2.0.1\lib\net20\Common.Logging.Log4Net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
@@ -93,6 +95,12 @@
     <Compile Include="Fileserver.Objects\FileMetaData.cs" />
     <Compile Include="Fileserver.Objects\UserFileSystemMetaData.cs" />
     <Compile Include="Fileserver.Exceptions\SharedUserNotLoadedInMemoryException.cs" />
+    <Compile Include="Fileserver.Isis\Isis.cs" />
+    <Compile Include="Fileserver.Isis\FileServerComm.cs" />
+    <Compile Include="Fileserver.Isis\OObHandler.cs" />
+    <Compile Include="Fileserver.Isis\BootStrap.cs" />
+    <Compile Include="Fileserver.Isis\FileOperation.cs" />
+    <Compile Include="Fileserver.Isis\TransactionManager.cs" />
     <Compile Include="Fileserver.Exceptions\VersionNumberConflictException.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -102,5 +110,6 @@
     <Folder Include="Fileserver.PersistentStore\" />
     <Folder Include="Fileserver.Utils\" />
     <Folder Include="Fileserver.Objects\" />
+    <Folder Include="Fileserver.Isis\" />
   </ItemGroup>
 </Project>
