@@ -139,6 +139,7 @@ namespace cloudfileserver
 			bool add = true;
 			long existingSize = 0;
 			if (existingFile != null) {
+				
 				existingSize = existingFile.getFileSizeSynchronized (); // this is the size of the existing file
 				
 				if (existingFile.filemetadata.markedForDeletion == false) {
@@ -191,8 +192,8 @@ namespace cloudfileserver
 		{
 			Logger.Debug ("Incrementing the total file system size by : " + inc);
 			lock (this.privateLock) {
+				
 				this.metadata.totalFileSystemSizeBytes += inc;
-			
 				Logger.Debug ("Updated total file system size is : " + this.metadata.totalFileSystemSizeBytes);
 				
 				if (this.metadata.totalFileSystemSizeBytes < 0) {
@@ -336,7 +337,7 @@ namespace cloudfileserver
 		{	
 			string s =  this.metadata.ToString ();
 			foreach (KeyValuePair<string, UserFile> entry in  this.filemap) {
-				s += string.Format("[FileName: {0}, FileContent:{1}]", entry.Key, entry.Value.ToString());
+				s += string.Format("[FileName: {0}, File:{1}]", entry.Key, entry.Value.ToString());
 			}
 			return  s;
 

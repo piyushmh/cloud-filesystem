@@ -36,16 +36,22 @@ namespace TestClient{
 		{
 
 			JsonServiceClient client = new JsonServiceClient ("http://128.84.216.57:8080");
-			//UpdateFile arg = new UpdateFile();
-			UserFile file = new UserFile ("x.txt", "piyush");
-			file.filecontent = new byte[0];//getByteArrayFromString ("Bitches this is the new file content");
-			file.filemetadata.versionNumber = 3;
+			UserFile file = new UserFile ("x_y_z.txt", "piyush");
+			file.filecontent = getByteArrayFromString ("Bitches this is the new file content");
+			file.filemetadata.versionNumber = 10;
 			file.filemetadata.filesize = file.filecontent.Length;
-			client.Post<Object> ("/adduser/piyush/password", new AddUser());
-			//client.Post<Object>("/updatefile/piyush/password", new UpdateFile{file= file});
+			//client.Post<Object> ("/adduser/piyush/password", new AddUser());
+			//client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{file= file});
 			//UserFile f = client.Get<UserFile> ("/file/piyush/password/z_x.txt/piyush");
 			//Console.WriteLine (f);
 			client.Post<object> ("/doPersistentCheckPoint/piyush/password", new DoPersistentCheckPoint ());
+			
+			
+			UserFile file1 = new UserFile ("x.txt", "piyush");
+			file1.filecontent = getByteArrayFromString ("Can you see me");
+			file1.filemetadata.versionNumber = 10;
+			file1.filemetadata.filesize = file1.filecontent.Length;
+			//client.Post<Object> ("/updatefile/piyush/password", new UpdateFile{file= file1});
 			
 			//arg.file = file;
 			//UserFile file = client.Get<UserFile> ("/fetchfile/piyush/x_z.txt");
