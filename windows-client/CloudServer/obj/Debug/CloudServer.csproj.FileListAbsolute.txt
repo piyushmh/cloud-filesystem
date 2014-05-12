@@ -1,0 +1,7 @@
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\bin\CloudServer.dll
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\bin\CloudServer.pdb
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\bin\EntityFramework.dll
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\bin\MetroFramework.dll
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\bin\EntityFramework.xml
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\obj\Debug\CloudServer.dll
+D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\obj\Debug\CloudServer.pdb

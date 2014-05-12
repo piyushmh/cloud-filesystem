@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="CloudManagerModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="CloudManagerEntities" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="StoredFiles" EntityType="CloudManagerModel.StoredFile" />
+  </EntityContainer>
+  <EntityType Name="StoredFile">
+    <Key>
+      <PropertyRef Name="CloudItemID" />
+    </Key>
+    <Property Name="CloudItemID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+    <Property Name="Description" Type="String" MaxLength="4000" Unicode="true" FixedLength="false" />
+    <Property Name="Date" Type="Binary" Nullable="false" MaxLength="100" FixedLength="true" />
+    <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+  </EntityType>
+</Schema>

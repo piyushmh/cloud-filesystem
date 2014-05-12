@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="CloudManagerModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="CloudManagerModelStoreContainer">
+    <EntitySet Name="File" EntityType="CloudManagerModel.Store.File" store:Type="Tables" />
+  </EntityContainer>
+  <EntityType Name="File">
+    <Key>
+      <PropertyRef Name="CloudItemID" />
+    </Key>
+    <Property Name="CloudItemID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+    <Property Name="Description" Type="nvarchar" />
+    <Property Name="Data " Type="binary" Nullable="false" MaxLength="100" />
+    <Property Name="DateTime" Type="datetime" Nullable="false" />
+  </EntityType>
+</Schema>

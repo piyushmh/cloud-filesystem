@@ -1,0 +1,54 @@
+
+-- --------------------------------------------------
+-- Entity Designer DDL Script for SQL Server Compact Edition
+-- --------------------------------------------------
+-- Date Created: 04/19/2014 15:05:00
+-- Generated from EDMX file: D:\Cornell\CS5412 - Cloud Computing\Project\CloudStorage\CloudServer\PhotoManager.edmx
+-- --------------------------------------------------
+
+
+-- --------------------------------------------------
+-- Dropping existing FOREIGN KEY constraints
+-- NOTE: if the constraint does not exist, an ignorable error will be reported.
+-- --------------------------------------------------
+
+
+-- --------------------------------------------------
+-- Dropping existing tables
+-- NOTE: if the table does not exist, an ignorable error will be reported.
+-- --------------------------------------------------
+
+    DROP TABLE [Photos];
+GO
+
+-- --------------------------------------------------
+-- Creating all tables
+-- --------------------------------------------------
+
+-- Creating table 'Files'
+CREATE TABLE [Files] (
+    [FileID] int IDENTITY(1,1) NOT NULL,
+    [Name] nvarchar(255)  NOT NULL,
+    [Description] nvarchar(4000)  NULL,
+    [Data] image  NOT NULL,
+    [DateTime] datetime  NOT NULL
+);
+GO
+
+-- --------------------------------------------------
+-- Creating all PRIMARY KEY constraints
+-- --------------------------------------------------
+
+-- Creating primary key on [FileID] in table 'Files'
+ALTER TABLE [Files]
+ADD CONSTRAINT [PK_Files]
+    PRIMARY KEY ([FileID] );
+GO
+
+-- --------------------------------------------------
+-- Creating all FOREIGN KEY constraints
+-- --------------------------------------------------
+
+-- --------------------------------------------------
+-- Script has ended
+-- --------------------------------------------------
